@@ -14,6 +14,7 @@ class Connector(object):
         self.ignore_known_hosts = ignore_known_hosts
         self.disable_host_key_checking = disable_host_key_checking
         self.timeout = timeout
+        self.prompt = None
 
         if self.ssh_config_file and not self.ignore_ssh_config:
             self.ssh_driver = 'ssh {0}'.format(self.device)
