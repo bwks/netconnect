@@ -2,7 +2,7 @@ class Connector(object):
     def __init__(self, device, username='', password='',
                  port=22, ssh_key_file='', ssh_config_file='',
                  ignore_ssh_config=True, ignore_known_hosts=True,
-                 disable_host_key_checking=True, timeout=5):
+                 host_key_checking=False, timeout=5):
 
         self.device = device
         self.username = username
@@ -12,7 +12,7 @@ class Connector(object):
         self.ssh_config_file = ssh_config_file
         self.ignore_ssh_config = ignore_ssh_config
         self.ignore_known_hosts = ignore_known_hosts
-        self.disable_host_key_checking = disable_host_key_checking
+        self.host_key_checking = host_key_checking
         self.timeout = timeout
         self.prompt = None
 
@@ -28,7 +28,7 @@ class Connector(object):
             if self.ignore_known_hosts:
                 options.append('-o UserKnownHostsFile=/dev/null')
 
-            if self.disable_host_key_checking:
+            if not self.host_key_checking:
                 options.append('-o StrictHostKeyChecking=no')
 
             if self.ssh_key_file:
