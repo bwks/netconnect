@@ -23,7 +23,7 @@ def unix_login(connection, login_type='ssh'):
     """
     validate_login_type(login_type)
 
-    login_cmd = connection.ssh_cmd if login_type.lower() is 'ssh' else connection.telnet_cmd
+    login_cmd = connection.ssh_driver if login_type.lower() is 'ssh' else connection.telnet_driver
 
     child = pexpect.spawn(login_cmd)
     i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*$', '.*assword.*'])
@@ -54,7 +54,7 @@ def cisco_login(connection, login_type='ssh', enable_password=''):
     """
     validate_login_type(login_type)
 
-    login_cmd = connection.ssh_cmd if login_type.lower() is 'ssh' else connection.telnet_cmd
+    login_cmd = connection.ssh_driver if login_type.lower() is 'ssh' else connection.telnet_driver
 
     child = pexpect.spawn(login_cmd)
     i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*assword.*', '.*>'])
