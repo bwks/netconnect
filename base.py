@@ -19,7 +19,8 @@ class Connector(object):
             self.ssh_driver = 'ssh {0}'.format(self.device)
 
         else:
-            options = []
+            options = ['-p {0}'.format(self.port)]
+
             if self.username:
                 options.append('-l {0}'.format(self.username))
 
