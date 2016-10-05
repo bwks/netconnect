@@ -10,10 +10,10 @@ def validate_login_type(login_type):
                          'Valid types are ssh and telnet'.format(login_type))
 
 
-def unix_login(connection, login_type='ssh'):
+def unix_login(connector, login_type='ssh'):
     """
     Login to linux/unix shell (bash terminal assumed)
-    :param connection: Connector object
+    :param connector: Connector object
     :param login_type: SSH or Telnet
     :return: pexpect spawn object
 
@@ -23,7 +23,7 @@ def unix_login(connection, login_type='ssh'):
     """
     validate_login_type(login_type)
 
-    login_cmd = connection.ssh_driver if login_type.lower() is 'ssh' else connection.telnet_driver
+    login_cmd = connector.ssh_driver if login_type.lower() is 'ssh' else connector.telnet_driver
 
     child = pexpect.spawn(login_cmd)
     i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*$', '.*assword.*'])
@@ -32,7 +32,7 @@ def unix_login(connection, login_type='ssh'):
     elif i == (2 or 3):
         return child
     elif i == 4:
-        child.sendline(connection.password)
+        child.sendline(connector.password)
         j = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*$'])
         if j == (0 or 1):
             raise i
@@ -40,10 +40,10 @@ def unix_login(connection, login_type='ssh'):
             return child
 
 
-def cisco_login(connection, login_type='ssh', enable_password=''):
+def cisco_login(connector, login_type='ssh', enable_password=''):
     """
     Login to Cisco IOS, IOS-XE, NXOS
-    :param connection: Connector object
+    :param connector: Connector object
     :param login_type: SSH or Telnet
     :param enable_password: Enable password if required
     :return: pexpect spawn object
@@ -54,7 +54,7 @@ def cisco_login(connection, login_type='ssh', enable_password=''):
     """
     validate_login_type(login_type)
 
-    login_cmd = connection.ssh_driver if login_type.lower() is 'ssh' else connection.telnet_driver
+    login_cmd = connector.ssh_driver if login_type.lower() is 'ssh' else connector.telnet_driver
 
     child = pexpect.spawn(login_cmd)
     i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*assword.*', '.*>'])
@@ -63,7 +63,7 @@ def cisco_login(connection, login_type='ssh', enable_password=''):
     elif i == 2:
         return child
     elif i == 3:
-        child.sendline(connection.password)
+        child.sendline(connector.password)
         j = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*>'])
         if j == (0 or 1):
             raise i
