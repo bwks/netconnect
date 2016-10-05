@@ -20,3 +20,20 @@ def send_commands(child, prompt, commands=None):
         child.expect([pexpect.TIMEOUT, pexpect.EOF, prompt])
 
     return results
+
+
+def parse_error(error):
+    if error == 0:
+        raise pexpect.EOF('Got EOF')
+    elif error == 1:
+        raise pexpect.TIMEOUT('Got Timeout')
+
+
+def debug_output(child):
+    hashes = '#' * 20
+    print('{0} {1} {0}'.format(hashes, 'before', hashes))
+    print(child.before)
+    print('{0} {1} {0}'.format(hashes, 'after', hashes))
+    print(child.after)
+    print('{0} {1} {0}'.format(hashes, 'child', hashes))
+    print(child)
