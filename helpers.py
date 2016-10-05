@@ -37,3 +37,4 @@ def debug_output(child):
     print(child.after)
     print('{0} {1} {0}'.format(hashes, 'child', hashes))
     print(child)
+    print('{0} {1} {0}'.format(hashes, 'end', hashes))
