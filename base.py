@@ -37,7 +37,6 @@ class Connector(object):
             if self.ignore_ssh_config:
                 options.append('-F /dev/null')
 
-            self.ssh_driver = 'ssh {0} {1}'.format(' '.join(options),
-                                                   self.device)
+            self.ssh_driver = 'ssh {0} {1}'.format(' '.join(options), self.device)
 
         self.telnet_driver = 'telnet {0} {1}'.format(self.device, self.port)
