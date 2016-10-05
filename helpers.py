@@ -4,7 +4,7 @@ import pexpect
 def get_prompt(child):
     child.sendcontrol('m')
     child.sendcontrol('m')
-    prompt = child.before
+    prompt = str(child.after).split('\\r\\n')[-1].replace("'", "")
     return prompt
 
 
