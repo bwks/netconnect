@@ -107,4 +107,5 @@ def juniper_login():
 
 
 def arista_login(connector, login_type='ssh', enable_password=''):
-    cisco_login(connector=connector, login_type=login_type, enable_password=enable_password)
+    return cisco_login(connector=connector, login_type=login_type,
+                       enable_password=enable_password)
