@@ -6,6 +6,9 @@ logging.basicConfig(level=logging.DEBUG)
 from . import helpers
 
 
+PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
+
+
 def validate_login_type(login_type):
     if login_type.lower() not in ['ssh', 'telnet']:
         raise ValueError('Invalid login type {0}. '
@@ -59,33 +62,45 @@ def cisco_login(connector, login_type='ssh', enable_password=''):
     login_cmd = connector.ssh_driver if login_type.lower() == 'ssh' else connector.telnet_driver
 
     child = pexpect.spawn(login_cmd, timeout=connector.timeout)
-    i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*assword', '.*>'])
+    i = child.expect(PEXPECT_ERRORS + ['.*#', '.*assword', '.*>'])
     if i == (0 or 1):
         helpers.debug_output(child)
+        child.kill(0)
         helpers.parse_error(i)
     elif i == 2:
         return child
     elif i == 3:
         child.sendline(connector.password)
-        j = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*>'])
+        j = child.expect(PEXPECT_ERRORS + ['.*#', '.*>'])
         if j == (0 or 1):
-            raise i
+            helpers.debug_output(child)
+            child.kill(0)
+            helpers.parse_error(i)
         elif j == 2:
             return child
         elif j == 3:
             if not enable_password:
                 raise ValueError('Need enable password, but None provided')
-            child.sendline(enable_password)
-            k = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#'])
+            child.sendline('enable')
+            k = child.expect(PEXPECT_ERRORS + ['.*assword'])
             if k == (0 or 1):
-                raise k
+                helpers.debug_output(child)
+                child.kill(0)
+                helpers.parse_error(i)
             elif k == 2:
-                return child
+                child.sendline(enable_password)
+                l = child.expect(PEXPECT_ERRORS + ['.*#'])
+                if l == (0 or 1):
+                    helpers.debug_output(child)
+                    child.kill(0)
+                    helpers.parse_error(i)
+                elif l == 2:
+                    return child
     elif i == 4:
         if not enable_password:
             raise ValueError('Need enable password, but None provided')
         child.sendline(enable_password)
-        j = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#'])
+        j = child.expect(PEXPECT_ERRORS + ['.*#'])
         if j == (0 or 1):
             raise j
         elif j == 2:
