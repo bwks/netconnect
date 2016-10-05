@@ -21,6 +21,22 @@ def clean_up_error(child, error):
     helpers.parse_error(error)
 
 
+def enable_mode(child, enable_password):
+    if not enable_password:
+        raise ValueError('Need enable password, but None provided')
+    child.sendline('enable')
+    a = child.expect(PEXPECT_ERRORS + ['.*assword'])
+    if a == (0 or 1):
+        clean_up_error(child, a)
+    elif a == 2:
+        child.sendline(enable_password)
+        b = child.expect(PEXPECT_ERRORS + ['.*#'])
+        if b == (0 or 1):
+            clean_up_error(child, b)
+        elif b == 2:
+            return child
+
+
 def unix_login(connector, login_type='ssh'):
     """
     Login to linux/unix shell (bash terminal assumed)
@@ -68,41 +84,23 @@ def cisco_login(connector, login_type='ssh', enable_password=''):
     login_cmd = connector.ssh_driver if login_type.lower() == 'ssh' else connector.telnet_driver
 
     child = pexpect.spawn(login_cmd, timeout=connector.timeout)
-    i = child.expect(PEXPECT_ERRORS + ['.*#', '.*assword', '.*>'])
+    i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*>', '.*#'])
     if i == (0 or 1):
         clean_up_error(child, i)
     elif i == 2:
-        return child
-    elif i == 3:
         child.sendline(connector.password)
-        j = child.expect(PEXPECT_ERRORS + ['.*#', '.*>'])
+        j = child.expect(PEXPECT_ERRORS + ['.*>', '.*#'])
         if j == (0 or 1):
             clean_up_error(child, j)
         elif j == 2:
-            return child
+            return enable_mode(child, enable_password)
         elif j == 3:
-            if not enable_password:
-                raise ValueError('Need enable password, but None provided')
-            child.sendline('enable')
-            k = child.expect(PEXPECT_ERRORS + ['.*assword'])
-            if k == (0 or 1):
-                clean_up_error(child, k)
-            elif k == 2:
-                child.sendline(enable_password)
-                l = child.expect(PEXPECT_ERRORS + ['.*#'])
-                if l == (0 or 1):
-                    clean_up_error(child, l)
-                elif l == 2:
-                    return child
-    elif i == 4:
-        if not enable_password:
-            raise ValueError('Need enable password, but None provided')
-        child.sendline(enable_password)
-        j = child.expect(PEXPECT_ERRORS + ['.*#'])
-        if j == (0 or 1):
-            raise j
-        elif j == 2:
             return child
+    elif i == 3:
+        return enable_mode(child, enable_password)
+    elif i == 4:
+        return child
+
 
 def juniper_login():
     pass
