@@ -3,6 +3,8 @@ import pexpect
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+from . import helpers
+
 
 def validate_login_type(login_type):
     if login_type.lower() not in ['ssh', 'telnet']:
@@ -23,7 +25,7 @@ def unix_login(connector, login_type='ssh'):
     """
     validate_login_type(login_type)
 
-    login_cmd = connector.ssh_driver if login_type.lower() is 'ssh' else connector.telnet_driver
+    login_cmd = connector.ssh_driver if login_type.lower() == 'ssh' else connector.telnet_driver
 
     child = pexpect.spawn(login_cmd)
     i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*$', '.*assword.*'])
@@ -54,12 +56,13 @@ def cisco_login(connector, login_type='ssh', enable_password=''):
     """
     validate_login_type(login_type)
 
-    login_cmd = connector.ssh_driver if login_type.lower() is 'ssh' else connector.telnet_driver
+    login_cmd = connector.ssh_driver if login_type.lower() == 'ssh' else connector.telnet_driver
 
-    child = pexpect.spawn(login_cmd)
-    i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*assword.*', '.*>'])
+    child = pexpect.spawn(login_cmd, timeout=connector.timeout)
+    i = child.expect([pexpect.EOF, pexpect.TIMEOUT, '.*#', '.*assword', '.*>'])
     if i == (0 or 1):
-        raise i
+        helpers.debug_output(child)
+        helpers.parse_error(i)
     elif i == 2:
         return child
     elif i == 3:
