@@ -22,19 +22,22 @@ def clean_up_error(child, error):
 
 
 def enable_mode(child, enable_password):
-    if not enable_password:
-        raise ValueError('Need enable password, but None provided')
     child.sendline('enable')
-    a = child.expect(PEXPECT_ERRORS + ['.*assword'])
+    a = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
     if a == (0 or 1):
         clean_up_error(child, a)
     elif a == 2:
+        if not enable_password:
+            child.close()
+            raise ValueError('Need enable password, but None provided')
         child.sendline(enable_password)
         b = child.expect(PEXPECT_ERRORS + ['.*#'])
         if b == (0 or 1):
             clean_up_error(child, b)
         elif b == 2:
             return child
+    elif a == 3:
+        return child
 
 
 def unix_login(connector, login_type='ssh'):
@@ -102,10 +105,10 @@ def cisco_login(connector, login_type='ssh', enable_password=''):
         return child
 
 
-def juniper_login():
-    pass
-
-
 def arista_login(connector, login_type='ssh', enable_password=''):
     return cisco_login(connector=connector, login_type=login_type,
                        enable_password=enable_password)
+
+
+def juniper_login():
+    pass
