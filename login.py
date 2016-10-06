@@ -7,6 +7,7 @@ from . import helpers
 
 
 PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
+DEBUG = False
 
 
 def validate_login_type(login_type):
@@ -16,7 +17,8 @@ def validate_login_type(login_type):
 
 
 def clean_up_error(child, error):
-    helpers.debug_output(child)
+    if DEBUG:
+        helpers.debug_output(child)
     child.close()
     helpers.parse_error(error)
 
