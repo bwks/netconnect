@@ -25,21 +25,21 @@ def clean_up_error(child, error):
 
 def enable_mode(child, enable_password, device):
     child.sendline('enable')
-    a = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
-    if a == (0 or 1):
+    i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
+    if i == (0 or 1):
         clean_up_error(child, a)
-    elif a == 2:
+    elif i == 2:
         if not enable_password:
             child.close()
             raise ValueError('Need enable password, but None provided')
         child.sendline(enable_password)
-        b = child.expect(PEXPECT_ERRORS + ['.*#'])
-        if b == (0 or 1):
+        j = child.expect(PEXPECT_ERRORS + ['.*#'])
+        if j == (0 or 1):
             clean_up_error(child, b)
-        elif b == 2:
+        elif j == 2:
             logging.debug('{0} privilege exec mode'.format(device))
             return child
-    elif a == 3:
+    elif i == 3:
         logging.debug('{0} privilege exec mode'.format(device))
         return child
 
