@@ -4,10 +4,11 @@ import pexpect
 def get_prompt(child):
     child.sendcontrol('m')
     child.sendcontrol('m')
-    
-    split_string = 'x1b[5n' if 'x1b[5n' in str(child.after) else '\\r\\n'
 
-    prompt = str(child.after).split(split_string)[-1].replace("'", "")
+    result = child.after
+    split_string = 'x1b[5n' if 'x1b[5n' in str(result) else '\\r\\n'
+
+    prompt = str(result).split(split_string)[-1].replace("'", "")
     return prompt
 
 
