@@ -5,10 +5,15 @@ def get_prompt(child):
     child.sendcontrol('m')
     child.sendcontrol('m')
 
-    result = child.after
-    split_string = 'x1b[5n' if 'x1b[5n' in str(result) else '\\r\\n'
+    result = child.after.decode()
+    if '\x1b[5n' in result:
+        split_string = '\x1b[5n'
+    elif '\r\n' in result:
+        split_string = '\r\n'
+    else:
+        split_string = '\n'
 
-    prompt = str(result).split(split_string)[-1].replace("'", "")
+    prompt = result.split(split_string)[-1]
     return prompt
 
 
