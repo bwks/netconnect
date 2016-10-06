@@ -23,7 +23,7 @@ def clean_up_error(child, error):
     helpers.parse_error(error)
 
 
-def enable_mode(child, enable_password):
+def enable_mode(child, enable_password, device):
     child.sendline('enable')
     a = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
     if a == (0 or 1):
@@ -37,8 +37,10 @@ def enable_mode(child, enable_password):
         if b == (0 or 1):
             clean_up_error(child, b)
         elif b == 2:
+            logging.debug('{0} privilege exec mode'.format(device))
             return child
     elif a == 3:
+        logging.debug('{0} privilege exec mode'.format(device))
         return child
 
 
@@ -98,12 +100,15 @@ def cisco_login(connector, login_type='ssh', enable_password=''):
         if j == (0 or 1):
             clean_up_error(child, j)
         elif j == 2:
-            return enable_mode(child, enable_password)
+            logging.debug('{0} user exec mode'.format(connector.device))
+            return enable_mode(child, enable_password, connector.device)
         elif j == 3:
+            logging.debug('{0} privilege exec mode'.format(connector.device))
             return child
     elif i == 3:
-        return enable_mode(child, enable_password)
+        return enable_mode(child, enable_password, connector.device)
     elif i == 4:
+        logging.debug('{0} privilege exec mode'.format(connector.device))
         return child
 
 
