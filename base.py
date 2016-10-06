@@ -16,8 +16,9 @@ class Connector(object):
         self.timeout = timeout
         self.prompt = None
 
-        if self.ssh_config_file and not self.ignore_ssh_config:
-            self.ssh_driver = 'ssh {0}'.format(self.device)
+        if self.ssh_config_file and self.ignore_ssh_config:
+            raise AttributeError('cannot define ssh_config_file '
+                                 'and set ignore_ssh_config to True')
 
         else:
             options = ['-p {0}'.format(self.port)]
@@ -33,6 +34,9 @@ class Connector(object):
 
             if self.ssh_key_file:
                 options.append('-o IdentityFile={0}'.format(self.ssh_key_file))
+
+            if self.ssh_config_file:
+                options.append('-F {0}'.format(self.ssh_config_file))
 
             if self.ignore_ssh_config:
                 options.append('-F /dev/null')
