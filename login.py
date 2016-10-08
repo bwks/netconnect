@@ -27,7 +27,7 @@ def enable_mode(child, enable_password, device):
     child.sendline('enable')
     i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
     if i == (0 or 1):
-        clean_up_error(child, a)
+        clean_up_error(child, i)
     elif i == 2:
         if not enable_password:
             child.close()
@@ -35,7 +35,7 @@ def enable_mode(child, enable_password, device):
         child.sendline(enable_password)
         j = child.expect(PEXPECT_ERRORS + ['.*#'])
         if j == (0 or 1):
-            clean_up_error(child, b)
+            clean_up_error(child, j)
         elif j == 2:
             logging.debug('{0} privilege exec mode'.format(device))
             return child
