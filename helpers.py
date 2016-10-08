@@ -1,6 +1,10 @@
 import pexpect
 
 
+PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
+DEBUG = False
+
+
 def get_prompt(child):
     child.sendcontrol('m')
     child.sendcontrol('m')
@@ -38,6 +42,12 @@ def parse_error(error):
         raise pexpect.TIMEOUT('Got Timeout')
 
 
+def validate_login_type(login_type):
+    if login_type.lower() not in ['ssh', 'telnet']:
+        raise ValueError('Invalid login type {0}. '
+                         'Valid types are ssh and telnet'.format(login_type))
+
+
 def debug_output(child):
     hashes = '#' * 20
     print('{0} {1} {0}'.format(hashes, 'before', hashes))
@@ -47,3 +57,10 @@ def debug_output(child):
     print('{0} {1} {0}'.format(hashes, 'child', hashes))
     print(child)
     print('{0} {1} {0}'.format(hashes, 'end', hashes))
+
+
+def clean_up_error(child, error):
+    if DEBUG:
+        debug_output(child)
+    child.close()
+    parse_error(error)
