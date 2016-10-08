@@ -7,9 +7,9 @@ DEBUG = False
 
 def get_prompt(child):
     child.sendcontrol('m')
-    child.sendcontrol('m')
+    child.expect('.*[>\#]')
 
-    result = child.after.decode()
+    result = child.after.decode(encoding='UTF-8')
     if '\x1b[5n' in result:
         split_string = '\x1b[5n'
     elif '\r\n' in result:
@@ -30,7 +30,11 @@ def send_commands(child, prompt, commands=None):
     results = []
     for i in commands:
         child.sendline(i)
-        child.expect([pexpect.TIMEOUT, pexpect.EOF, prompt])
+        j = child.expect(PEXPECT_ERRORS + [prompt])
+        if j == (0 or 1):
+            clean_up_error(child, j)
+        elif j == 2:
+            results.append(child.before.decode(encoding='UTF-8'))
 
     return results
 
