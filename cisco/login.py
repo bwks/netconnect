@@ -61,12 +61,14 @@ class CiscoLogin(BaseLogin):
                 clean_up_error(child, j)
             elif j == 2:
                 logging.debug('{0} user exec mode'.format(self.device))
-                return self.enable_mode(child, self.device, enable_password)
+                return self.enable_mode(child=child, device=self.device,
+                                        enable_password=enable_password)
             elif j == 3:
                 logging.debug('{0} privilege exec mode'.format(self.device))
                 return child
         elif i == 3:
-            return self.enable_mode(child, self.device, enable_password)
+            return self.enable_mode(child=child, device=self.device,
+                                    enable_password=enable_password)
         elif i == 4:
             logging.debug('{0} privilege exec mode'.format(self.connector.device))
             return child
