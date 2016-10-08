@@ -1,4 +1,4 @@
-class Connector(object):
+class BaseLogin(object):
     def __init__(self, device, username='', password='',
                  port=22, ssh_key_file='', ssh_config_file='',
                  ignore_ssh_config=True, ignore_known_hosts=True,
