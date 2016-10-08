@@ -14,7 +14,6 @@ class BaseLogin(object):
         self.ignore_known_hosts = ignore_known_hosts
         self.host_key_checking = host_key_checking
         self.timeout = timeout
-        self.prompt = None
 
         if self.ssh_config_file and self.ignore_ssh_config:
             raise AttributeError('cannot define ssh_config_file '
