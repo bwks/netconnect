@@ -28,6 +28,16 @@ def test_base_login_device(setup_ssh_no_defaults):
     assert setup_ssh_no_defaults.device == 'test-dev'
 
 
+def test_base_login_port(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.port == 22
+
+
+def test_base_login_with_no_port_ssh_driver_syntax():
+    dev = BaseLogin(device='test-dev', username='test-user', password='password', port='',
+                    ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
+    assert dev.ssh_driver == 'ssh -l test-user test-dev'
+
+
 def test_base_login_instantiation_is_a_connector_object(setup_base_login):
     assert isinstance(setup_base_login, BaseLogin)
 
