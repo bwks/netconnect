@@ -1,0 +1,6 @@
+# CI build file
+language: python
+python:
+  - "3.4"
+# command to run tests
+script: nosetests
