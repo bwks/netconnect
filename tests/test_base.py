@@ -2,14 +2,38 @@ import pytest
 
 from netconnect.base import BaseLogin
 
+
 @pytest.fixture()
 def setup_base_login():
     dev = BaseLogin(device='test-dev')
     return dev
 
 
+@pytest.fixture()
+def setup_ssh_no_defaults():
+    dev = BaseLogin(device='test-dev', username='test-user', password='password',
+                    ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
+    return dev
+
+
+def test_base_login_password(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.password == 'password'
+
+
+def test_base_login_timeout(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.timeout == 5
+
+
+def test_base_login_device(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.device == 'test-dev'
+
+
 def test_base_login_instantiation_is_a_connector_object(setup_base_login):
     assert isinstance(setup_base_login, BaseLogin)
+
+
+def test_base_login_options_username_password_ssh_driver_syntax(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.ssh_driver == 'ssh -p 22 -l test-user test-dev'
 
 
 def test_telnet_driver_syntax():
