@@ -20,7 +20,10 @@ class BaseLogin(object):
                                  'and set ignore_ssh_config to True')
 
         else:
-            options = ['-p {0}'.format(self.port)]
+            options = []
+
+            if self.port:
+                options.append('-p {0}'.format(self.port))
 
             if self.username:
                 options.append('-l {0}'.format(self.username))
