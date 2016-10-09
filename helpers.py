@@ -1,11 +1,15 @@
 import pexpect
 
 
+PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
+DEBUG = False
+
+
 def get_prompt(child):
     child.sendcontrol('m')
-    child.sendcontrol('m')
+    child.expect('.*[>\#]')
 
-    result = child.after.decode()
+    result = child.after.decode(encoding='UTF-8')
     if '\x1b[5n' in result:
         split_string = '\x1b[5n'
     elif '\r\n' in result:
@@ -18,7 +22,7 @@ def get_prompt(child):
 
 
 def send_commands(child, prompt, commands=None):
-    if commands is None or not isinstance(commands, [str, list]):
+    if commands is None or not isinstance(commands, (str, list)):
         raise ValueError('commands should be a [list, of, commands]')
     elif isinstance(commands, str):
         commands = [commands]
@@ -26,7 +30,11 @@ def send_commands(child, prompt, commands=None):
     results = []
     for i in commands:
         child.sendline(i)
-        child.expect([pexpect.TIMEOUT, pexpect.EOF, prompt])
+        j = child.expect(PEXPECT_ERRORS + [prompt])
+        if j == (0 or 1):
+            clean_up_error(child, j)
+        elif j == 2:
+            results.append(child.before.decode(encoding='UTF-8'))
 
     return results
 
@@ -38,6 +46,12 @@ def parse_error(error):
         raise pexpect.TIMEOUT('Got Timeout')
 
 
+def validate_login_type(login_type):
+    if login_type.lower() not in ['ssh', 'telnet']:
+        raise ValueError('Invalid login type {0}. '
+                         'Valid types are ssh and telnet'.format(login_type))
+
+
 def debug_output(child):
     hashes = '#' * 20
     print('{0} {1} {0}'.format(hashes, 'before', hashes))
@@ -47,3 +61,10 @@ def debug_output(child):
     print('{0} {1} {0}'.format(hashes, 'child', hashes))
     print(child)
     print('{0} {1} {0}'.format(hashes, 'end', hashes))
+
+
+def clean_up_error(child, error):
+    if DEBUG:
+        debug_output(child)
+    child.close()
+    parse_error(error)
