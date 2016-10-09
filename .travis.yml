@@ -2,5 +2,7 @@
 language: python
 python:
   - "3.4"
-# command to run tests
-script: pytest
+before_install:
+    - pip install pytest pytest-cov pexpect
+script:
+    - py.test
