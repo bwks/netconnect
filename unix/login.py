@@ -9,11 +9,14 @@ from netconnect.helpers import (
 )
 
 
+# Settings
+logging.basicConfig(level=logging.DEBUG)
+
+
 class UnixLogin(BaseLogin):
     def login(self, login_type='ssh'):
         """
         Login to linux/unix shell (bash terminal assumed)
-        :param connector: Connector object
         :param login_type: SSH or Telnet
         :return: pexpect spawn object
 
@@ -26,15 +29,17 @@ class UnixLogin(BaseLogin):
         login_cmd = self.ssh_driver if login_type.lower() == 'ssh' else self.telnet_driver
 
         child = pexpect.spawn(login_cmd)
-        i = child.expect(PEXPECT_ERRORS + ['.*#', '.*$', '.*assword.*'])
+        i = child.expect(PEXPECT_ERRORS + ['[#\$]', '.*assword.*'])
         if i == (0 or 1):
-            raise i
-        elif i == (2 or 3):
+            clean_up_error(child, i)
+        elif i == 2:
+            logging.debug('logged in to bash')
             return child
-        elif i == 4:
+        elif i == 3:
             child.sendline(self.password)
-            j = child.expect(PEXPECT_ERRORS + ['.*#', '.*$'])
+            j = child.expect(PEXPECT_ERRORS + ['[#\$]'])
             if j == (0 or 1):
-                raise i
-            elif j == (2 or 3):
+                clean_up_error(child, j)
+            elif j == 2:
+                logging.debug('logged in to bash')
                 return child
