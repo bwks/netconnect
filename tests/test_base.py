@@ -32,6 +32,16 @@ def test_base_login_port(setup_ssh_no_defaults):
     assert setup_ssh_no_defaults.port == 22
 
 
+def test_base_login_host_key_checking(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.host_key_checking is True
+
+
+def test_base_login_options_with_ssh_key_file_ssh_driver_syntax():
+    dev = BaseLogin(device='test-dev', ssh_key_file='~/.ssh/config', port='',
+                    ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
+    assert dev.ssh_driver == 'ssh -o IdentityFile=~/.ssh/config test-dev'
+
+
 def test_base_login_with_no_port_ssh_driver_syntax():
     dev = BaseLogin(device='test-dev', username='test-user', password='password', port='',
                     ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
@@ -73,4 +83,3 @@ def test_base_login_options_ssh_config_file_and_ignore_ssh_config_ssh_driver_syn
     dev = BaseLogin(device='test-dev', ssh_config_file='~/.ssh/config', ignore_ssh_config=False)
     assert dev.ssh_driver == ('ssh -p 22 -o UserKnownHostsFile=/dev/null '
                               '-o StrictHostKeyChecking=no -F ~/.ssh/config test-dev')
-
