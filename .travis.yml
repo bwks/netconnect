@@ -3,6 +3,9 @@ language: python
 python:
   - "3.4"
 before_install:
-    - pip install pytest pytest-cov pexpect
+    - pip install pytest pytest-cov
+    - pip install coveralls
 script:
     - py.test
+after_success:
+    - coveralls
