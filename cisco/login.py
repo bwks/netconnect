@@ -70,5 +70,5 @@ class CiscoLogin(BaseLogin):
             return self.enable_mode(child=child, device=self.device,
                                     enable_password=enable_password)
         elif i == 4:
-            logging.debug('{0} privilege exec mode'.format(self.connector.device))
+            logging.debug('{0} privilege exec mode'.format(self.device))
             return child
