@@ -1,6 +1,6 @@
 import pytest
 
-from netconnect.helpers import parse_error
+from netconnect.helpers import parse_error, validate_login_type
 from pexpect.exceptions import EOF, TIMEOUT
 
 
@@ -24,3 +24,8 @@ def test_parse_error_timout_message():
     with pytest.raises(TIMEOUT) as e:
         parse_error(1)
         assert e.value.message == 'Got Timeout'
+
+
+def test_validate_login_type_raises_value_error():
+    with pytest.raises(ValueError):
+        validate_login_type('invalid')
