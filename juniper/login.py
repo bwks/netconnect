@@ -16,6 +16,12 @@ class JuniperLogin(BaseLogin):
 
     @staticmethod
     def operational_mode(child, device):
+        """
+        Move into operational mode if in root cli
+        :param child: pexpect spawn child
+        :param device: name of device
+        :return: pexpect.spawn child
+        """
         child.sendline('cli')
         i = child.expect(PEXPECT_ERRORS + ['.*>'])
         if i == (0 or 1):
