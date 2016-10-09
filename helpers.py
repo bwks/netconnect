@@ -7,7 +7,7 @@ DEBUG = False
 
 def get_prompt(child):
     child.sendcontrol('m')
-    child.expect('.*[>\#]')
+    child.expect('.*[>\#\$]')
 
     result = child.after.decode(encoding='UTF-8')
     if '\x1b[5n' in result:
