@@ -13,7 +13,7 @@ from netconnect.helpers import (
 logging.basicConfig(level=logging.DEBUG)
 
 
-class UnixLogin(BaseLogin):
+class UnixDriver(BaseLogin):
     def login(self, login_type='ssh'):
         """
         Login to linux/unix shell (bash terminal assumed)
@@ -30,7 +30,7 @@ class UnixLogin(BaseLogin):
 
         child = pexpect.spawn(login_cmd)
         i = child.expect(PEXPECT_ERRORS + ['[#\$]', '.*assword.*'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(child, i)
         elif i == 2:
             logging.debug('logged in to bash')
@@ -38,7 +38,7 @@ class UnixLogin(BaseLogin):
         elif i == 3:
             child.sendline(self.password)
             j = child.expect(PEXPECT_ERRORS + ['[#\$]'])
-            if j == (0 or 1):
+            if j == 0 or j == 1:
                 clean_up_error(child, j)
             elif j == 2:
                 logging.debug('logged in to bash')
