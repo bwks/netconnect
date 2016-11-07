@@ -25,11 +25,10 @@ class JuniperDriver(BaseLogin):
         """
         child.sendline('cli')
         i = child.expect(PEXPECT_ERRORS + ['.*>'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(child, i)
         elif i == 2:
             logging.debug('{0} operational mode'.format(device))
-            return child
 
     def login(self, login_type='ssh'):
         """
@@ -46,23 +45,25 @@ class JuniperDriver(BaseLogin):
         login_cmd = self.ssh_driver if login_type.lower() == 'ssh' else self.telnet_driver
 
         self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
-        i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*:~ #', '.*>'])
-        if i == (0 or 1):
+        i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*:~ #', '@.*%', '.*>'])
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             self.child.sendline(self.password)
-            j = self.child.expect(PEXPECT_ERRORS + ['.*:~ #', '.*>'])
-            if j == (0 or 1):
+            j = self.child.expect(PEXPECT_ERRORS + ['.*:~ #', '@.*%', '.*>'])
+            if j == 0 or j == 1:
                 clean_up_error(self.child, j)
-            elif j == 2:
+            elif j == 2 or j == 3:
                 logging.debug('{0} root user mode'.format(self.device))
-                return self.operational_mode(child=self.child, device=self.device)
-            elif j == 3:
+                self.operational_mode(child=self.child, device=self.device)
+            elif j == 4:
                 logging.debug('{0} operational mode'.format(self.device))
-        elif i == 3:
+        elif i == 3 or i == 4:
+            print('3 or 4')
             logging.debug('{0} root user mode'.format(self.device))
-            return self.operational_mode(child=self.child, device=self.device)
-        elif i == 4:
+            self.operational_mode(child=self.child, device=self.device)
+        elif i == 5:
+            print(5)
             logging.debug('{0} operational mode'.format(self.device))
 
     def get_prompt(self):
@@ -84,7 +85,7 @@ class JuniperDriver(BaseLogin):
 
         self.child.sendline('set cli screen-length 0')
         i = self.child.expect(PEXPECT_ERRORS + [prompt])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('paging disabled')
@@ -93,7 +94,7 @@ class JuniperDriver(BaseLogin):
     def save_config(self):
         self.child.sendline('commit')
         i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('config saved')
@@ -102,7 +103,7 @@ class JuniperDriver(BaseLogin):
     def configuration_mode(self):
         self.child.sendline('configure')
         i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('configuration mode')
@@ -111,7 +112,7 @@ class JuniperDriver(BaseLogin):
     def enable_api(self):
         self.child.sendline('set system services netconf ssh')
         i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('netconf ssh enabled')
