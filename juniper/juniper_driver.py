@@ -59,11 +59,9 @@ class JuniperDriver(BaseLogin):
             elif j == 4:
                 logging.debug('{0} operational mode'.format(self.device))
         elif i == 3 or i == 4:
-            print('3 or 4')
             logging.debug('{0} root user mode'.format(self.device))
             self.operational_mode(child=self.child, device=self.device)
         elif i == 5:
-            print(5)
             logging.debug('{0} operational mode'.format(self.device))
 
     def get_prompt(self):
@@ -79,7 +77,6 @@ class JuniperDriver(BaseLogin):
         return helpers.send_commands(child=self.child, prompt=prompt, commands=commands)
 
     def disable_paging(self, prompt=''):
-        # expect_prompt = prompt if prompt else '.*>'
         if not prompt:
             prompt = self.get_prompt()
 
