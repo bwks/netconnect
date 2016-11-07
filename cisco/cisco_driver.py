@@ -19,7 +19,7 @@ class CiscoDriver(BaseLogin):
     def enable_mode(child, device, enable_password=''):
         child.sendline('enable')
         i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(child, i)
         elif i == 2:
             if not enable_password:
@@ -27,7 +27,7 @@ class CiscoDriver(BaseLogin):
                 raise ValueError('Need enable password, but None provided')
             child.sendline(enable_password)
             j = child.expect(PEXPECT_ERRORS + ['.*#'])
-            if j == (0 or 1):
+            if j == 0 or j == 1:
                 clean_up_error(child, j)
             elif j == 2:
                 logging.debug('{0} privilege exec mode'.format(device))
@@ -53,12 +53,12 @@ class CiscoDriver(BaseLogin):
 
         self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
         i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*>', '.*#'])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             self.child.sendline(self.password)
             j = self.child.expect(PEXPECT_ERRORS + ['.*>', '.*#'])
-            if j == (0 or 1):
+            if j == 0 or j == 1:
                 clean_up_error(self.child, j)
             elif j == 2:
                 logging.debug('{0} user exec mode'.format(self.device))
@@ -91,7 +91,7 @@ class CiscoDriver(BaseLogin):
 
         self.child.sendline('terminal length 0')
         i = self.child.expect(PEXPECT_ERRORS + [prompt])
-        if i == (0 or 1):
+        if i == 0 or i == 1:
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('paging disabled')
