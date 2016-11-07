@@ -2,7 +2,7 @@ import pexpect
 
 
 PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
-DEBUG = False
+DEBUG = True
 
 
 def get_prompt(child):
@@ -31,7 +31,7 @@ def send_commands(child, prompt, commands=None):
     for i in commands:
         child.sendline(i)
         j = child.expect(PEXPECT_ERRORS + [prompt])
-        if j == (0 or 1):
+        if j == 0 or j == 1:
             clean_up_error(child, j)
         elif j == 2:
             results.append(child.before.decode(encoding='UTF-8'))
@@ -54,6 +54,8 @@ def validate_login_type(login_type):
 
 def debug_output(child):
     hashes = '#' * 20
+    print('{0} {1} {0}'.format(hashes, 'match', hashes))
+    print(child.match)
     print('{0} {1} {0}'.format(hashes, 'before', hashes))
     print(child.before)
     print('{0} {1} {0}'.format(hashes, 'after', hashes))
