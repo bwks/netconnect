@@ -24,24 +24,21 @@ class CiscoDriver(BaseLogin):
         elif i == 2:
             if not enable_password:
                 child.close()
-                raise ValueError('Need enable password, but None provided')
+                raise ValueError('Need enable password, but none provided')
             child.sendline(enable_password)
             j = child.expect(PEXPECT_ERRORS + ['.*#'])
             if j == 0 or j == 1:
                 clean_up_error(child, j)
             elif j == 2:
                 logging.debug('{0} privilege exec mode'.format(device))
-                # return child
         elif i == 3:
             logging.debug('{0} privilege exec mode'.format(device))
-            # return child
 
     def login(self, login_type='ssh', enable_password=''):
         """
         Login to Cisco IOS, IOS-XE, NXOS
         :param login_type: SSH or Telnet
         :param enable_password: Enable password if required
-        :return: pexpect spawn object
 
         Authentication types:
          - username and password
