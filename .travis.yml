@@ -6,6 +6,6 @@ before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
 script:
-    - py.test --cov=netconnect tests/
+    - py.test --cov=netconnect
 after_success:
     - coveralls
