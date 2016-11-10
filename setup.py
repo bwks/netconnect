@@ -12,7 +12,7 @@ setup(
     author='Brad Searle',
     author_email='bradleysearle@gmail.com',
     packages=['netconnect',
-              'netconenct.arista',
+              'netconnect.arista',
               'netconnect.cisco',
               'netconnect.juniper',
               'netconnect.unix',
