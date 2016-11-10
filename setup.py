@@ -1,12 +1,18 @@
-from distutils.core import setup
+import os
+from setuptools import setup
 
-with open('README.txt', 'r') as f:
-    readme = f.read()
+
+def read(file_name):
+    with open(os.path.join(os.path.dirname(__file__), file_name), 'r') as f:
+        return f.read()
 
 setup(
     name='netconnect',
     version='0.1',
-    packages=['netconnect',],
+    author='Brad Searle',
+    author_email='bradleysearle@gmail.com',
+    packages=['netconnect', 'arista', 'cisco', 'jupiper', 'unix', 'tests'],
     license='GNU GENERAL PUBLIC LICENSE Version 3',
-    long_description=readme,
+    long_description=read('README.txt'),
+    install_requires=['pexpect']
 )
