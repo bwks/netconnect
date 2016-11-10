@@ -9,5 +9,5 @@ def setup_juniper_driver():
     return dev
 
 
-def test_setup_juniper_driver_is_a_cisco_juniper_object(setup_juniper_driver):
+def test_setup_juniper_driver_is_a_juniper_driver_object(setup_juniper_driver):
     assert isinstance(setup_juniper_driver, JuniperDriver)
