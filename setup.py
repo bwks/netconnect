@@ -11,7 +11,12 @@ setup(
     version='0.1',
     author='Brad Searle',
     author_email='bradleysearle@gmail.com',
-    packages=['netconnect', 'tests'],
+    packages=['netconnect',
+              'netconenct.arista',
+              'netconnect.cisco',
+              'netconnect.juniper',
+              'netconnect.unix',
+              'tests'],
     license='GNU GENERAL PUBLIC LICENSE Version 3',
     long_description=read('README.txt'),
     install_requires=['pexpect']
