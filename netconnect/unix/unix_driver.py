@@ -14,6 +14,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class UnixDriver(BaseLogin):
+    """
+    Driver to login to unix shell devices. Configured for bash shells
+    """
     def login(self, login_type='ssh'):
         """
         Login to linux/unix shell (bash terminal assumed)
@@ -28,18 +31,20 @@ class UnixDriver(BaseLogin):
 
         login_cmd = self.ssh_driver if login_type.lower() == 'ssh' else self.telnet_driver
 
-        child = pexpect.spawn(login_cmd)
-        i = child.expect(PEXPECT_ERRORS + ['[#\$]', '.*assword.*'])
+        self.child = pexpect.spawn(login_cmd)
+        i = self.child.expect(PEXPECT_ERRORS + ['[#\$]', '.*assword.*'])
         if i == 0 or i == 1:
-            clean_up_error(child, i)
+            logging.debug('{0} error connecting to device'.format(self.device))
+            clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('logged in to bash')
-            return child
+            return self.child
         elif i == 3:
-            child.sendline(self.password)
-            j = child.expect(PEXPECT_ERRORS + ['[#\$]'])
+            self.child.sendline(self.password)
+            j = self.child.expect(PEXPECT_ERRORS + ['[#\$]'])
             if j == 0 or j == 1:
-                clean_up_error(child, j)
+                logging.debug('{0} error sending user password'.format(self.device))
+                clean_up_error(self.child, j)
             elif j == 2:
                 logging.debug('logged in to bash')
-                return child
+
