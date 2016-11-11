@@ -28,8 +28,8 @@ def test_base_login_device(setup_ssh_no_defaults):
     assert setup_ssh_no_defaults.device == 'test-dev'
 
 
-def test_base_login_port(setup_ssh_no_defaults):
-    assert setup_ssh_no_defaults.port == 22
+def test_base_login_ssh_port(setup_ssh_no_defaults):
+    assert setup_ssh_no_defaults.ssh_port == 22
 
 
 def test_base_login_host_key_checking(setup_ssh_no_defaults):
@@ -37,15 +37,15 @@ def test_base_login_host_key_checking(setup_ssh_no_defaults):
 
 
 def test_base_login_options_with_ssh_key_file_ssh_driver_syntax():
-    dev = BaseLogin(device='test-dev', ssh_key_file='~/.ssh/config', port='',
+    dev = BaseLogin(device='test-dev', ssh_key_file='~/.ssh/config',
                     ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
-    assert dev.ssh_driver == 'ssh -o IdentityFile=~/.ssh/config test-dev'
+    assert dev.ssh_driver == 'ssh -p 22 -o IdentityFile=~/.ssh/config test-dev'
 
 
 def test_base_login_with_no_port_ssh_driver_syntax():
-    dev = BaseLogin(device='test-dev', username='test-user', password='password', port='',
+    dev = BaseLogin(device='test-dev', username='test-user', password='password',
                     ignore_ssh_config=False, ignore_known_hosts=False, host_key_checking=True)
-    assert dev.ssh_driver == 'ssh -l test-user test-dev'
+    assert dev.ssh_driver == 'ssh -p 22 -l test-user test-dev'
 
 
 def test_base_login_instantiation_is_a_connector_object(setup_base_login):
@@ -57,7 +57,7 @@ def test_base_login_options_username_password_ssh_driver_syntax(setup_ssh_no_def
 
 
 def test_telnet_driver_syntax():
-    dev = BaseLogin(device='test-dev', port=23)
+    dev = BaseLogin(device='test-dev', telnet_port=23)
     assert dev.telnet_driver == 'telnet test-dev 23'
 
 
