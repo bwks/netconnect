@@ -97,7 +97,6 @@ class CiscoDriver(BaseLogin):
                command the first command in the list
         :return: A list of command results
         """
-
         if not prompt:
             prompt = self.get_prompt()
 
