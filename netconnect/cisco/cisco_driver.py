@@ -123,6 +123,46 @@ class CiscoDriver(BaseLogin):
             logging.debug('paging disabled')
             return True
 
+    def save_config(self, source='running-config', destination='startup-config'):
+        """
+        Save device config
+        :param source: Source file name
+        :param destination: Destination file name
+        :return: True if successful
+        """
+        self.child.sendcontrol('z')
+        self.child.sendline('copy {0} {1}'.format(source, destination))
+        i = self.child.expect(PEXPECT_ERRORS + ['.*Destination filename.*', '.*#'])
+        if i == 0 or i == 1:
+            logging.debug('{0} error sending copy run start command'.format(self.device))
+            clean_up_error(self.child, i)
+        elif i == 2:
+            self.child.sendcontrol('z')
+            j = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+            if j == 0 or j == 1:
+                logging.debug('{0} error saving config'.format(self.device))
+                clean_up_error(self.child, j)
+            elif i == 2:
+                logging.debug('config saved')
+                return True
+        elif i == 3:
+            logging.debug('config saved')
+            return True
+
+    def configuration_mode(self):
+        """
+        Enter configuration mode
+        :return: True if successful
+        """
+        self.child.sendline('configure terminal')
+        i = self.child.expect(PEXPECT_ERRORS + ['.*\(config\)#'])
+        if i == 0 or i == 1:
+            logging.debug('{0} error sending configure terminal command'.format(self.device))
+            clean_up_error(self.child, i)
+        elif i == 2:
+            logging.debug('configuration mode')
+            return True
+
     def enable_api(self):
         """
         Enable device API. Currently only supported on IOS-XE
