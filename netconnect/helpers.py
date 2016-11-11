@@ -50,6 +50,8 @@ def validate_login_type(login_type):
     if login_type.lower() not in ['ssh', 'telnet']:
         raise ValueError('Invalid login type {0}. '
                          'Valid types are ssh and telnet'.format(login_type))
+    else:
+        return True
 
 
 def debug_output(child):

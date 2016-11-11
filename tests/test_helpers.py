@@ -29,3 +29,11 @@ def test_parse_error_timout_message():
 def test_validate_login_type_raises_value_error():
     with pytest.raises(ValueError):
         validate_login_type('invalid')
+
+
+def test_validate_login_type_with_telnet_does_not_raise_value_error():
+    assert validate_login_type('telnet') is True
+
+
+def test_validate_login_type_with_ssh_does_not_raise_value_error():
+    assert validate_login_type('ssh') is True
