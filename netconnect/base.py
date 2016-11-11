@@ -1,4 +1,7 @@
 class BaseLogin(object):
+    """
+    Base login class. Device Driver classes will inherit this class
+    """
     def __init__(self, device, username='', password='', telnet_port=23,
                  ssh_port=22, ssh_key_file='', ssh_config_file='',
                  ignore_ssh_config=True, ignore_known_hosts=True,
