@@ -6,8 +6,7 @@
 Connect to devices via ssh or telnet and run automated work flows.  
 netconnect utilizes pexpect to control telnet or ssh sessions.  
 netconnect has been designed with a focus on network device automation.  
-It is usefull for controlling terminal sessions where an API is not available  
-or not yet enabled.
+It is usefull for controlling terminal sessions where an API is not available or not yet enabled.  
 
 netconnect has a concept of drivers which are used to seperate out the differing terminal intricacies.  
 There is currently drivers for the following device models: 
