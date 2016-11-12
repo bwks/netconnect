@@ -3,13 +3,13 @@
 [![Coverage Status](https://coveralls.io/repos/github/bobthebutcher/netconnect/badge.svg?branch=master)](https://coveralls.io/github/bobthebutcher/netconnect?branch=master) 
 
 ### Overview
-Connect to devices via ssh or telnet and run automated work flows. 
-netconnect utilizes pexpect to control telnet or ssh sessions. 
-netconnect has been designed with a focus on network device automation. 
-It is usefull for controlling terminal sessions where an API is not available 
+Connect to devices via ssh or telnet and run automated work flows.  
+netconnect utilizes pexpect to control telnet or ssh sessions.  
+netconnect has been designed with a focus on network device automation.  
+It is usefull for controlling terminal sessions where an API is not available  
 or not yet enabled.
 
-netconnect has a concept of drivers which are used to seperate out the differing terminal intricacies.
+netconnect has a concept of drivers which are used to seperate out the differing terminal intricacies.  
 There is currently drivers for the following device models: 
  - cisco
  - juniper
