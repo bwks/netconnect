@@ -154,4 +154,4 @@ class JuniperDriver(BaseLogin):
             clean_up_error(self.child, i)
         elif i == 2:
             logging.debug('netconf ssh enabled')
-            return True
+            return self.save_config()
