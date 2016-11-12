@@ -144,6 +144,9 @@ class JuniperDriver(BaseLogin):
         Enable device API
         :return: True if successful
         """
+        if self.get_prompt().endswith('>'):
+            self.configuration_mode()
+
         self.child.sendline('set system services netconf ssh')
         i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
         if i == 0 or i == 1:
