@@ -20,7 +20,7 @@ def test_parse_error_raises_timeout():
         parse_error(1)
 
 
-def test_parse_error_timout_message():
+def test_parse_error_timeout_message():
     with pytest.raises(TIMEOUT) as e:
         parse_error(1)
         assert e.value.message == 'Got Timeout'
