@@ -1,10 +1,9 @@
 # netconnect
 [![Build Status](https://travis-ci.org/bobthebutcher/netconnect.svg?branch=master)](https://travis-ci.org/bobthebutcher/netconnect)
 [![Coverage Status](https://coveralls.io/repos/github/bobthebutcher/netconnect/badge.svg?branch=master)](https://coveralls.io/github/bobthebutcher/netconnect?branch=master) 
-Connect to devices via telnet and ssh 
-Currently under development not ready for production 
 
 ### Overview
+Connect to devices via telnet and ssh 
 netconnect utilizes pexpect to control telnet or ssh sessions. 
 netconnect has been designed with a focus on network device automation. 
 It is usefull for controlling terminal sessions where an API is not available 
@@ -27,11 +26,24 @@ pip install https://github.com/bobthebutcher/netconnect/archive/master.zip
 
 ### Usage
 ```python
+# Cisco device
 from netconnect.cisco.cisco_driver import CiscoDriver
-dev = CiscoDriver(device='test-dev', username='test-user', password='password')
+dev = CiscoDriver(device='test-csr-01', username='test-user', password='password')
 dev.login(enable_password='enable-pass')
 commands = ['show version', 'show run']
 results = dev.send_commands(commands)
+
+# Juniper Device
+from netconnect.juniper.juniper_driver import JuniperDriver
+dev = JuniperDriver(device='test-vmx-01', username='test-user', password='password')
+dev.login()
+dev.enable_api()
+
+# Arista Device
+from netconnect.arista.arista_driver import AristaDriver
+dev = AristaDriver(device='test-eos-01', username='test-user', password='password')
+dev.login()
+dev.enable_api()
 ```
 
 ### Enable debugging
