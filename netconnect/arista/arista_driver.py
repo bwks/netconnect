@@ -15,5 +15,5 @@ class AristaDriver(CiscoDriver):
                     'no shutdown']
 
         self.configuration_mode()
-        self.send_commands(commands=commands, prompt='.*api-http-cmds\)#')
+        self.send_commands(commands=commands, prompt='.*api-http-cmds\)#', disable_paging=False)
         self.save_config()
