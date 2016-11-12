@@ -137,7 +137,7 @@ class CiscoDriver(BaseLogin):
             logging.debug('{0} error sending copy run start command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            self.child.sendcontrol('z')
+            self.child.sendcontrol('m')
             j = self.child.expect(PEXPECT_ERRORS + ['.*#'])
             if j == 0 or j == 1:
                 logging.debug('{0} error saving config'.format(self.device))
