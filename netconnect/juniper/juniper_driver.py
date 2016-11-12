@@ -108,7 +108,7 @@ class JuniperDriver(BaseLogin):
             logging.debug('{0} error sending disable paging command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('paging disabled')
+            logging.debug('{0} paging disabled'.format(self.device))
             return True
 
     def save_config(self):
@@ -122,7 +122,7 @@ class JuniperDriver(BaseLogin):
             logging.debug('{0} error sending commit command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('config saved')
+            logging.debug('{0} config saved'.format(self.device))
             return True
 
     def configuration_mode(self):
@@ -136,7 +136,7 @@ class JuniperDriver(BaseLogin):
             logging.debug('{0} error sending configure command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('configuration mode')
+            logging.debug('{0} configuration mode'.format(self.device))
             return True
 
     def enable_api(self):
@@ -153,5 +153,5 @@ class JuniperDriver(BaseLogin):
             logging.debug('{0} error sending enable api command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('netconf ssh enabled')
+            logging.debug('{0} netconf ssh enabled'.format(self.device))
             return self.save_config()

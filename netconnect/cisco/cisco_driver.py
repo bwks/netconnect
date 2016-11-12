@@ -120,7 +120,7 @@ class CiscoDriver(BaseLogin):
             logging.debug('{0} error sending disable paging command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('paging disabled')
+            logging.debug('{0} paging disabled'.format(self.device))
             return True
 
     def save_config(self, source='running-config', destination='startup-config'):
@@ -143,10 +143,10 @@ class CiscoDriver(BaseLogin):
                 logging.debug('{0} error saving config'.format(self.device))
                 clean_up_error(self.child, j)
             elif i == 2:
-                logging.debug('config saved')
+                logging.debug('{0} config saved'.format(self.device))
                 return True
         elif i == 3:
-            logging.debug('config saved')
+            logging.debug('{0} config saved'.format(self.device))
             return True
 
     def configuration_mode(self):
@@ -160,7 +160,7 @@ class CiscoDriver(BaseLogin):
             logging.debug('{0} error sending configure terminal command'.format(self.device))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('configuration mode')
+            logging.debug('{0} configuration mode'.format(self.device))
             return True
 
     def enable_api(self):
