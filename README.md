@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/bobthebutcher/netconnect/badge.svg?branch=master)](https://coveralls.io/github/bobthebutcher/netconnect?branch=master) 
 
 ### Overview
-Connect to devices via telnet and ssh 
+Connect to devices via ssh or telnet and run automated work flows. 
 netconnect utilizes pexpect to control telnet or ssh sessions. 
 netconnect has been designed with a focus on network device automation. 
 It is usefull for controlling terminal sessions where an API is not available 
