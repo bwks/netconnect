@@ -16,4 +16,4 @@ class AristaDriver(CiscoDriver):
 
         self.configuration_mode()
         self.send_commands(commands=commands, prompt='.*api-http-cmds\)#', disable_paging=False)
-        self.save_config()
+        return self.save_config()
