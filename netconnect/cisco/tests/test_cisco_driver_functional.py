@@ -4,7 +4,7 @@ import pexpect
 from netconnect.cisco.cisco_driver import CiscoDriver
 
 
-run_tests = True
+run_tests = False
 
 @pytest.fixture()
 def setup_cisco_driver():
