@@ -4,7 +4,7 @@ import pexpect
 from netconnect.arista.arista_driver import AristaDriver
 
 
-run_tests = True
+run_tests = False
 
 @pytest.fixture()
 def setup_arista_driver():
