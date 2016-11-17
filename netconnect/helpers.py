@@ -17,7 +17,7 @@ def get_prompt(child):
     else:
         split_string = '\n'
 
-    prompt = result.split(split_string)[-1]
+    prompt = result.split(split_string)[-1].strip('\r')
     return prompt
 
 
