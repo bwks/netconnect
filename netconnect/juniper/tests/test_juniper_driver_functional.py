@@ -4,11 +4,16 @@ import pexpect
 from netconnect.juniper.juniper_driver import JuniperDriver
 
 
+# Test Variables
 run_tests = False
+test_device = '10.1.1.70'
+test_user = 'lab'
+test_pass = 'Password'
+
 
 @pytest.fixture()
 def setup_juniper_driver():
-    dev = JuniperDriver(device='10.1.1.70', username='lab', password='Password')
+    dev = JuniperDriver(device=test_device, username=test_user, password=test_pass)
     return dev
 
 
