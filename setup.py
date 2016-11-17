@@ -8,7 +8,7 @@ def read(file_name):
 
 setup(
     name='netconnect',
-    version='0.2',
+    version='0.3',
     author='Brad Searle',
     author_email='bradleysearle@gmail.com',
     packages=['netconnect',
