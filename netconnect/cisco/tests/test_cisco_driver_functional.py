@@ -5,16 +5,20 @@ from netconnect.cisco.cisco_driver import CiscoDriver
 
 
 run_tests = False
+test_device = '10.1.1.71'
+test_user = 'lab'
+test_pass = 'Password'
+test_enable_pass = 'Password'
 
 @pytest.fixture()
 def setup_cisco_driver():
-    dev = CiscoDriver(device='10.1.1.71', username='lab', password='Password')
+    dev = CiscoDriver(device=test_device, username=test_user, password=test_pass)
     return dev
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
 def test_login_with_correct_details_succeeds(setup_cisco_driver):
-    setup_cisco_driver.login(enable_password='Password')
+    setup_cisco_driver.login(enable_password=test_enable_pass)
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
@@ -39,24 +43,24 @@ def test_login_with_correct_details_and_no_enable_password_raises_value_error(se
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
 def test_get_prompt_returns_correct_prompt(setup_cisco_driver):
-    setup_cisco_driver.login(enable_password='Password')
+    setup_cisco_driver.login(enable_password=test_enable_pass)
     assert setup_cisco_driver.get_prompt() == 'lab-csr-01#'
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
 def test_disable_paging_returns_true(setup_cisco_driver):
-    setup_cisco_driver.login(enable_password='Password')
+    setup_cisco_driver.login(enable_password=test_enable_pass)
     assert setup_cisco_driver.disable_paging() is True
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
 def test_save_config_returns_true(setup_cisco_driver):
-    setup_cisco_driver.login(enable_password='Password')
+    setup_cisco_driver.login(enable_password=test_enable_pass)
     assert setup_cisco_driver.save_config() is True
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
 def test_configuration_mode_returns_true(setup_cisco_driver):
-    setup_cisco_driver.login(enable_password='Password')
+    setup_cisco_driver.login(enable_password=test_enable_pass)
     assert setup_cisco_driver.configuration_mode() is True
 
