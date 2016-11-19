@@ -12,12 +12,14 @@ def get_prompt(child):
     result = child.after.decode(encoding='UTF-8')
     if '\x1b[5n' in result:
         split_string = '\x1b[5n'
+    elif '\r\n\r' in result:
+        split_string = '\r\n\r'
     elif '\r\n' in result:
         split_string = '\r\n'
     else:
         split_string = '\n'
 
-    prompt = result.split(split_string)[-1].strip('\r')
+    prompt = result.split(split_string)[-1]
     return prompt
 
 
