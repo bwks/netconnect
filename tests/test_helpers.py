@@ -1,7 +1,22 @@
 import pytest
 
-from netconnect.helpers import parse_error, validate_login_type
+from unittest.mock import Mock, patch
+from netconnect.helpers import parse_error, validate_login_type, get_prompt
 from pexpect.exceptions import EOF, TIMEOUT
+
+
+def setup_fake_child(fake_string):
+    fake_child = Mock()
+    fake_child.send_control.return_value = ''
+    fake_child.expect.return_value = ''
+    fake_child.after.decode.return_value = '{0}lab-gw-01#'.format(fake_string)
+    return fake_child
+
+
+def test_get_prompt_returns_correct_prompt():
+    split_list = ['\x1b[5n', '\r\n\r\n', '\r\n\r', '\r\n', '\n']
+    for split in split_list:
+        assert 'lab-gw-01#' == get_prompt(setup_fake_child(split))
 
 
 def test_parse_error_raises_eof():
@@ -37,3 +52,5 @@ def test_validate_login_type_with_telnet_does_not_raise_value_error():
 
 def test_validate_login_type_with_ssh_does_not_raise_value_error():
     assert validate_login_type('ssh') is True
+
+
