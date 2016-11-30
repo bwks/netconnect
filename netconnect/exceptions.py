@@ -4,15 +4,15 @@ class Error(Exception):
 
 
 class LoginTimeoutError(Error):
-    """Raised when the input value is too small"""
+    """Raised login to device times out"""
     pass
 
 
 class LoginCredentialsError(Error):
-    """Raised when the input value is too large"""
+    """Raised when there is a problem with the user credentials"""
     pass
 
 
 class EnablePasswordError(Error):
-    """Raised when the input value is too large"""
+    """Raised when there is a problem with the enable password"""
     pass
