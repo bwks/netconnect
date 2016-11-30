@@ -71,8 +71,9 @@ def debug_output(child):
     print('{0} {1} {0}'.format(hashes, 'end', hashes))
 
 
-def clean_up_error(child, error):
+def clean_up_error(child, error, get_error=True):
     if DEBUG:
         debug_output(child)
     child.close()
-    parse_error(error)
+    if get_error:
+        parse_error(error)
