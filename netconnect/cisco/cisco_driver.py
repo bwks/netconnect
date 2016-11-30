@@ -1,5 +1,6 @@
-import pexpect
 import logging
+import time
+import pexpect
 
 from netconnect import helpers
 from netconnect.base import BaseLogin
@@ -130,9 +131,15 @@ class CiscoDriver(BaseLogin):
         :param destination: Destination file name
         :return: True if successful
         """
-        self.child.sendcontrol('z')
+        if self.get_prompt().endswith(')#'):
+            self.child.sendline('end')
+
         self.child.sendline('copy {0} {1}'.format(source, destination))
-        i = self.child.expect(PEXPECT_ERRORS + ['.*Destination filename.*', '.*#'])
+        # ASA has a timing issue when saving config. Adding
+        # in 1 second of sleep before expecting prompt to compensate
+        time.sleep(1)
+
+        i = self.child.expect(PEXPECT_ERRORS + ['.*filename.*', '.*#'])
         if i == 0 or i == 1:
             logging.debug('{0} error sending copy run start command'.format(self.device))
             clean_up_error(self.child, i)
