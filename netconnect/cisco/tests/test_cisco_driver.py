@@ -1,5 +1,10 @@
+import sys
 import pytest
-from unittest.mock import patch, Mock
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import Mock, patch
+else:
+    from mock import Mock, patch
 
 from netconnect.cisco.cisco_driver import CiscoDriver
 
