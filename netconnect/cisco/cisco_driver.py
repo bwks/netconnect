@@ -9,6 +9,12 @@ from netconnect.helpers import (
     clean_up_error,
     PEXPECT_ERRORS,
 )
+from netconnect.exceptions import (
+    LoginTimeoutError,
+    LoginCredentialsError,
+    EnablePasswordError,
+)
+
 
 # Settings
 logging.basicConfig(level=logging.DEBUG)
@@ -34,12 +40,13 @@ class CiscoDriver(BaseLogin):
         elif i == 2:
             if not enable_password:
                 child.close()
-                raise ValueError('Need enable password, but none provided')
+                raise EnablePasswordError('{0} need enable password, but none provided'.format(device))
             child.sendline(enable_password)
             j = child.expect(PEXPECT_ERRORS + ['.*#'])
             if j == 0 or j == 1:
                 logging.debug('{0} error sending enable password'.format(device))
-                clean_up_error(child, j)
+                clean_up_error(child, j, get_error=False)
+                raise EnablePasswordError('{0} error sending enable password'.format(device))
             elif j == 2:
                 logging.debug('{0} privilege exec mode'.format(device))
         elif i == 3:
@@ -63,13 +70,15 @@ class CiscoDriver(BaseLogin):
         i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*>', '.*#'])
         if i == 0 or i == 1:
             logging.debug('{0} error connecting to device'.format(self.device))
-            clean_up_error(self.child, i)
+            clean_up_error(self.child, i, get_error=False)
+            raise LoginTimeoutError('{0} error connecting to device'.format(self.device))
         elif i == 2:
             self.child.sendline(self.password)
             j = self.child.expect(PEXPECT_ERRORS + ['.*>', '.*#'])
             if j == 0 or j == 1:
                 logging.debug('{0} error sending user password'.format(self.device))
-                clean_up_error(self.child, j)
+                clean_up_error(self.child, j, get_error=False)
+                raise LoginCredentialsError('{0} error sending user password'.format(self.device))
             elif j == 2:
                 logging.debug('{0} user exec mode'.format(self.device))
                 self.enable_mode(child=self.child, device=self.device,
