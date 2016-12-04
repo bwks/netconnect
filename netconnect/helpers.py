@@ -12,12 +12,16 @@ def get_prompt(child):
     result = child.after.decode(encoding='UTF-8')
     if '\x1b[5n' in result:
         split_string = '\x1b[5n'
+    elif '\r\n\r\n' in result:
+        split_string = '\r\n\r\n'
+    elif '\r\n\r' in result:
+        split_string = '\r\n\r'
     elif '\r\n' in result:
         split_string = '\r\n'
     else:
         split_string = '\n'
 
-    prompt = result.split(split_string)[-1].strip('\r')
+    prompt = result.split(split_string)[-1]
     return prompt
 
 
@@ -67,8 +71,9 @@ def debug_output(child):
     print('{0} {1} {0}'.format(hashes, 'end', hashes))
 
 
-def clean_up_error(child, error):
+def clean_up_error(child, error, get_error=True):
     if DEBUG:
         debug_output(child)
     child.close()
-    parse_error(error)
+    if get_error:
+        parse_error(error)

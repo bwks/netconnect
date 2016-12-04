@@ -1,7 +1,10 @@
 import pytest
-import pexpect
 
 from netconnect.cisco.cisco_driver import CiscoDriver
+from netconnect.exceptions import (
+    LoginCredentialsError,
+    EnablePasswordError,
+)
 
 
 run_tests = False
@@ -22,23 +25,29 @@ def test_login_with_correct_details_succeeds(setup_cisco_driver):
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
-def test_login_with_incorrect_password_fails():
+def test_login_with_incorrect_password_raises_login_credentials_error():
     dev = CiscoDriver(device='10.1.1.71', username='lab', password='wrong', timeout=3)
-    with pytest.raises(pexpect.TIMEOUT):
+    with pytest.raises(LoginCredentialsError):
         dev.login()
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
-def test_login_with_incorrect_username_fails():
+def test_login_with_incorrect_username_login_credentials_error():
     dev = CiscoDriver(device='10.1.1.71', username='wrong', password='Password', timeout=3)
-    with pytest.raises(pexpect.TIMEOUT):
+    with pytest.raises(LoginCredentialsError):
         dev.login()
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')
-def test_login_with_correct_details_and_no_enable_password_raises_value_error(setup_cisco_driver):
-    with pytest.raises(ValueError):
+def test_login_with_correct_details_and_no_enable_password_raises_enable_password_error(setup_cisco_driver):
+    with pytest.raises(EnablePasswordError):
         setup_cisco_driver.login()
+
+
+@pytest.mark.skipif(not run_tests, reason='test requires cisco device')
+def test_login_with_incorrect_enable_password_raises_enable_password_error(setup_cisco_driver):
+    with pytest.raises(EnablePasswordError):
+        setup_cisco_driver.login(enable_password='wrong')
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires cisco device')

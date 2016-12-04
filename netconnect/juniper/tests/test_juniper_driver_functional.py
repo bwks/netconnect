@@ -1,8 +1,9 @@
 import pytest
-import pexpect
 
 from netconnect.juniper.juniper_driver import JuniperDriver
-
+from netconnect.exceptions import (
+    LoginCredentialsError,
+)
 
 # Test Variables
 run_tests = False
@@ -25,14 +26,14 @@ def test_login_with_correct_details_succeeds(setup_juniper_driver):
 @pytest.mark.skipif(not run_tests, reason='test requires juniper device')
 def test_login_with_incorrect_password_fails():
     dev = JuniperDriver(device='10.1.1.72', username='lab', password='wrong', timeout=3)
-    with pytest.raises(pexpect.TIMEOUT):
+    with pytest.raises(LoginCredentialsError):
         dev.login()
 
 
 @pytest.mark.skipif(not run_tests, reason='test requires juniper device')
 def test_login_with_incorrect_username_fails():
     dev = JuniperDriver(device='10.1.1.72', username='wrong', password='Password', timeout=3)
-    with pytest.raises(pexpect.TIMEOUT):
+    with pytest.raises(LoginCredentialsError):
         dev.login()
 
 
