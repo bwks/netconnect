@@ -7,6 +7,9 @@ else:
     from mock import Mock, patch
 
 from netconnect.cisco.cisco_driver import CiscoDriver
+from netconnect.exceptions import (
+    LoginTimeoutError,
+)
 
 
 @pytest.fixture()
@@ -27,3 +30,9 @@ def test_setup_cisco_driver_is_a_cisco_driver_object(setup_cisco_driver):
 
 def test_disable_paging_returns_true():
     assert fake_disable_paging() is True
+
+
+def test_login_to_invalid_device_raises_login_timeout_error():
+    dev = CiscoDriver(device='no_device', username='test-user', password='password', timeout=1)
+    with pytest.raises(LoginTimeoutError):
+        dev.login()
