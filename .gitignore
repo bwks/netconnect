@@ -90,3 +90,6 @@ ENV/
 
 # pycharm
 .idea/
+
+# pipenv
+Pipfile*
