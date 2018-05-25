@@ -19,6 +19,8 @@ class BaseLogin(object):
         self.host_key_checking = host_key_checking
         self.timeout = timeout
 
+        self.__child = None
+
         if self.ssh_config_file and self.ignore_ssh_config:
             raise AttributeError('cannot define ssh_config_file '
                                  'and set ignore_ssh_config to True')
@@ -49,3 +51,11 @@ class BaseLogin(object):
             self.ssh_driver = 'ssh {0} {1}'.format(' '.join(options), self.device)
 
         self.telnet_driver = 'telnet {0} {1}'.format(self.device, self.telnet_port)
+
+    @property
+    def child(self):
+        return self.__child
+
+    @child.setter
+    def child(self, value):
+        self.__child = value

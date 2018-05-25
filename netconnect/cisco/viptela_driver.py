@@ -35,20 +35,21 @@ class ViptelaDriver(BaseLogin):
 
         login_cmd = self.ssh_driver
 
-        self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
+        child = pexpect.spawn(login_cmd, timeout=self.timeout)
+        self.child = child
 
-        i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
+        i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
         if i == 0 or i == 1:
             logging.debug('{0} error connecting to device'.format(self.device))
-            clean_up_error(self.child, i, get_error=False)
+            clean_up_error(child, i, get_error=False)
             raise LoginTimeoutError('{0} error connecting to device'.format(self.device))
 
         elif i == 2:
-            self.child.sendline(self.password)
-            j = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+            child.sendline(self.password)
+            j = child.expect(PEXPECT_ERRORS + ['.*#'])
             if j == 0 or j == 1:
                 logging.debug('{0} error sending user password'.format(self.device))
-                clean_up_error(self.child, j, get_error=False)
+                clean_up_error(child, j, get_error=False)
                 raise LoginCredentialsError('{0} error sending user password'.format(self.device))
             elif j == 2:
                 logging.debug('{0} privilege exec mode'.format(self.device))
