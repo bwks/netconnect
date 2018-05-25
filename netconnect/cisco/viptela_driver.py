@@ -14,6 +14,20 @@ from netconnect.exceptions import (
     LoginCredentialsError,
 )
 
+from netconnect.constants import (
+    PASSWORD_PROMPT,
+    VIPTELA_PROMPT,
+    VIPTELA_CONFIG_PROMPT,
+)
+
+from netconnect.messages import (
+    send_command_error_msg,
+    device_connection_error_msg,
+    user_password_error_msg,
+    privilege_exec_success_msg,
+    configuration_mode_success_msg,
+    disable_paging_success_msg,
+)
 
 # Settings
 logging.basicConfig(level=logging.INFO)
@@ -35,27 +49,28 @@ class ViptelaDriver(BaseLogin):
 
         login_cmd = self.ssh_driver
 
-        child = pexpect.spawn(login_cmd, timeout=self.timeout)
-        self.child = child
+        self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
+        i = self.child.expect(PEXPECT_ERRORS + [PASSWORD_PROMPT, VIPTELA_PROMPT])
 
-        i = child.expect(PEXPECT_ERRORS + ['.*assword', '.*#'])
         if i == 0 or i == 1:
-            logging.debug('{0} error connecting to device'.format(self.device))
-            clean_up_error(child, i, get_error=False)
-            raise LoginTimeoutError('{0} error connecting to device'.format(self.device))
+            logging.debug(device_connection_error_msg(self.device))
+            clean_up_error(self.child, i, get_error=False)
+            raise LoginTimeoutError(device_connection_error_msg(self.device))
 
         elif i == 2:
-            child.sendline(self.password)
-            j = child.expect(PEXPECT_ERRORS + ['.*#'])
+            self.child.sendline(self.password)
+            j = self.child.expect(PEXPECT_ERRORS + [VIPTELA_PROMPT])
+
             if j == 0 or j == 1:
-                logging.debug('{0} error sending user password'.format(self.device))
-                clean_up_error(child, j, get_error=False)
-                raise LoginCredentialsError('{0} error sending user password'.format(self.device))
+                logging.debug(user_password_error_msg(self.device))
+                clean_up_error(self.child, j, get_error=False)
+                raise LoginCredentialsError(user_password_error_msg(self.device))
+
             elif j == 2:
-                logging.debug('{0} privilege exec mode'.format(self.device))
+                logging.debug(privilege_exec_success_msg(self.device))
 
         elif i == 3:
-            logging.debug('{0} privilege exec mode'.format(self.device))
+            logging.debug(privilege_exec_success_msg(self.device))
 
     def get_prompt(self):
         """
@@ -64,7 +79,7 @@ class ViptelaDriver(BaseLogin):
         """
         return helpers.get_prompt(self.child)
 
-    def send_commands(self, commands, prompt='', disable_paging=True):
+    def send_commands(self, commands, prompt=VIPTELA_PROMPT, disable_paging=True):
         """
         Send a list of commands to device
         :param commands: A list of commands to send
@@ -81,40 +96,51 @@ class ViptelaDriver(BaseLogin):
 
         return helpers.send_commands(child=self.child, prompt=prompt, commands=commands)
 
-    def disable_paging(self, prompt=''):
+    def disable_paging(self, prompt=VIPTELA_PROMPT, command='paginate false'):
         """
         Disable paging of long terminal outputs. Represented as <more>
+        :param command: Command to disable pagination
         :param prompt: Prompt to expect
         :return: True if successful
         """
         if not prompt:
             prompt = self.get_prompt()
 
-        self.child.sendline('paginate false')
+        self.child.sendline(command)
         i = self.child.expect(PEXPECT_ERRORS + [prompt])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending disable paging command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
+
         elif i == 2:
-            logging.debug('{0} paging disabled'.format(self.device))
+            logging.debug(disable_paging_success_msg(self.device))
             return True
 
-    def configuration_mode(self):
+    def configuration_mode(self, command='configure terminal'):
         """
         Enter configuration mode
+        :param command: Command to enter configuration mode
         :return: True if successful
         """
-        self.child.sendline('configure terminal')
-        i = self.child.expect(PEXPECT_ERRORS + ['.*\(config\)#'])
+        self.child.sendline(command)
+        i = self.child.expect(PEXPECT_ERRORS + [VIPTELA_CONFIG_PROMPT])
         if i == 0 or i == 1:
-            logging.debug('{0} error sending configure terminal command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
         elif i == 2:
-            logging.debug('{0} configuration mode'.format(self.device))
+            logging.debug(configuration_mode_success_msg(self.device))
             return True
 
-    def backup_config_db(self, filename='', path='/home/basic'):
-
+    def backup_config_db(self, filename='', path='/home/basic', prompt=VIPTELA_PROMPT, timeout=60):
+        """
+        Backup vManage configuration database. Only valid for vManage devices.
+        :param filename: Name of backup file (excluding .tar.gz)
+        :param path: Path to save to file
+        :param prompt: Expected Prompt
+        :param timeout: Timeout in seconds to wait for command to complete
+        :return: True if successful
+        """
         if not filename:
             time_now = strftime('%Y-%m-%d-%H%M%S')
             filename = '{0}-backup-{1}'.format(self.device, time_now)
@@ -122,10 +148,12 @@ class ViptelaDriver(BaseLogin):
         backup_command = 'request nms configuration-db backup path {0}/{1}'.format(path, filename)
 
         self.child.sendline(backup_command)
-        i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+        i = self.child.expect(PEXPECT_ERRORS + [prompt], timeout=timeout)
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, backup_command))
             clean_up_error(self.child, i)
+
         elif i == 2:
             logging.debug('{0} backup command completed'.format(self.device))
             return True

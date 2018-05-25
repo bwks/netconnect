@@ -93,3 +93,7 @@ ENV/
 
 # pipenv
 Pipfile*
+
+
+# pytest
+.pytest_cache/
