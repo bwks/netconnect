@@ -112,11 +112,11 @@ class ViptelaDriver(BaseLogin):
             logging.debug('{0} configuration mode'.format(self.device))
             return True
 
-    def backup_config_db(self, filename='', path='/opt/data/backup'):
+    def backup_config_db(self, filename='', path='/home/basic'):
 
-        today = strftime('%Y-%m-%d')
         if not filename:
-            filename = '{0}-backup-{1}'.format(self.device, today)
+            time_now = strftime('%Y-%m-%d-%H%M%S')
+            filename = '{0}-backup-{1}'.format(self.device, time_now)
 
         backup_command = 'request nms configuration-db backup path {0}/{1}'.format(path, filename)
 
