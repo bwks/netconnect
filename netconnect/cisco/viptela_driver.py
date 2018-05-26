@@ -4,7 +4,7 @@ import pexpect
 from time import strftime
 
 from netconnect import helpers
-from netconnect.base import BaseLogin
+from netconnect.base import BaseDriver
 from netconnect.helpers import (
     clean_up_error,
     PEXPECT_ERRORS,
@@ -13,13 +13,11 @@ from netconnect.exceptions import (
     LoginTimeoutError,
     LoginCredentialsError,
 )
-
 from netconnect.constants import (
     PASSWORD_PROMPT,
-    VIPTELA_PROMPT,
+    VIPTELA_PRIV_PROMPT,
     VIPTELA_CONFIG_PROMPT,
 )
-
 from netconnect.messages import (
     send_command_error_msg,
     device_connection_error_msg,
@@ -33,7 +31,7 @@ from netconnect.messages import (
 logging.basicConfig(level=logging.INFO)
 
 
-class ViptelaDriver(BaseLogin):
+class ViptelaDriver(BaseDriver):
     """
     Driver to login and send commands to Viptela devices.
     """
@@ -50,7 +48,7 @@ class ViptelaDriver(BaseLogin):
         login_cmd = self.ssh_driver
 
         self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
-        i = self.child.expect(PEXPECT_ERRORS + [PASSWORD_PROMPT, VIPTELA_PROMPT])
+        i = self.child.expect(PEXPECT_ERRORS + [PASSWORD_PROMPT, VIPTELA_PRIV_PROMPT])
 
         if i == 0 or i == 1:
             logging.debug(device_connection_error_msg(self.device))
@@ -59,7 +57,7 @@ class ViptelaDriver(BaseLogin):
 
         elif i == 2:
             self.child.sendline(self.password)
-            j = self.child.expect(PEXPECT_ERRORS + [VIPTELA_PROMPT])
+            j = self.child.expect(PEXPECT_ERRORS + [VIPTELA_PRIV_PROMPT])
 
             if j == 0 or j == 1:
                 logging.debug(user_password_error_msg(self.device))
@@ -79,7 +77,7 @@ class ViptelaDriver(BaseLogin):
         """
         return helpers.get_prompt(self.child)
 
-    def send_commands(self, commands, prompt=VIPTELA_PROMPT, disable_paging=True):
+    def send_commands(self, commands, prompt=VIPTELA_PRIV_PROMPT, disable_paging=True):
         """
         Send a list of commands to device
         :param commands: A list of commands to send
@@ -96,7 +94,7 @@ class ViptelaDriver(BaseLogin):
 
         return helpers.send_commands(child=self.child, prompt=prompt, commands=commands)
 
-    def disable_paging(self, prompt=VIPTELA_PROMPT, command='paginate false'):
+    def disable_paging(self, prompt=VIPTELA_PRIV_PROMPT, command='paginate false'):
         """
         Disable paging of long terminal outputs. Represented as <more>
         :param command: Command to disable pagination
@@ -132,7 +130,12 @@ class ViptelaDriver(BaseLogin):
             logging.debug(configuration_mode_success_msg(self.device))
             return True
 
-    def backup_config_db(self, filename='', path='/home/basic', prompt=VIPTELA_PROMPT, timeout=60):
+    def backup_config_db(
+            self, filename='',
+            path='/home/basic',
+            prompt=VIPTELA_PRIV_PROMPT,
+            timeout=60
+            ):
         """
         Backup vManage configuration database. Only valid for vManage devices.
         :param filename: Name of backup file (excluding .tar.gz)

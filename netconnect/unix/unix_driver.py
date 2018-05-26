@@ -1,7 +1,7 @@
 import pexpect
 import logging
 
-from netconnect.base import BaseLogin
+from netconnect.base import BaseDriver
 from netconnect.helpers import (
     validate_login_type,
     clean_up_error,
@@ -13,7 +13,7 @@ from netconnect.helpers import (
 logging.basicConfig(level=logging.DEBUG)
 
 
-class UnixDriver(BaseLogin):
+class UnixDriver(BaseDriver):
     """
     Driver to login to unix shell devices. Configured for bash shells
     """

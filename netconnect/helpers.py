@@ -2,7 +2,7 @@ import pexpect
 
 
 PEXPECT_ERRORS = [pexpect.EOF, pexpect.TIMEOUT]
-DEBUG = False
+DEBUG = True
 
 
 def get_prompt(child):
