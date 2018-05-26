@@ -26,20 +26,20 @@ pip install https://github.com/bobthebutcher/netconnect/archive/master.zip
 ### Usage
 ```python
 # Cisco device
-from netconnect.cisco.cisco_driver import CiscoDriver
+from netconnect.cisco import CiscoDriver
 dev = CiscoDriver(device='test-csr-01', username='test-user', password='password')
 dev.login(enable_password='enable-pass')
 commands = ['show version', 'show run']
 results = dev.send_commands(commands)
 
 # Juniper Device
-from netconnect.juniper.juniper_driver import JuniperDriver
+from netconnect.juniper import JuniperDriver
 dev = JuniperDriver(device='test-vmx-01', username='test-user', password='password')
 dev.login()
 dev.enable_api()
 
 # Arista Device
-from netconnect.arista.arista_driver import AristaDriver
+from netconnect.arista import AristaDriver
 dev = AristaDriver(device='test-eos-01', username='test-user', password='password')
 dev.login()
 dev.enable_api()
