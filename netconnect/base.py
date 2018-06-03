@@ -59,5 +59,9 @@ class BaseDriver(object):
     def child(self, value):
         self.__child = value
 
-    def scp(self):
+    def scp(self, source_file, destination_location):
+
+        scp_command = 'scp {0} {1}@{2}:{3}/{0}'.format(
+            source_file, self.username, self.device, destination_location
+        )
         pass

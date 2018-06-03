@@ -56,3 +56,7 @@ def scp_enabled_success_msg(device):
 
 def rest_api_enabled_success_msg(device):
     return '{0} rest api enabled'.format(device)
+
+
+def bash_success_msg(device):
+    return '{0} entered bash shell'.format(device)
