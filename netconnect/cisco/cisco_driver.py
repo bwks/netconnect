@@ -42,6 +42,20 @@ class CiscoDriver(BaseDriver):
     """
     Driver to login and send commands to cisco devices.
     """
+    def __init__(self, device, username='', password='', telnet_port=23,
+                 ssh_port=22, ssh_key_file='', ssh_config_file='',
+                 ignore_ssh_config=True, ignore_known_hosts=True,
+                 disable_host_key_checking=False, timeout=5, enable_password=''):
+
+        super().__init__(
+            device, username, password, telnet_port,
+            ssh_port, ssh_key_file, ssh_config_file,
+            ignore_ssh_config, ignore_known_hosts,
+            disable_host_key_checking, timeout
+        )
+
+        self.enable_password = enable_password
+
     @staticmethod
     def enable_mode(child, device, enable_password='', command='enable'):
         """
@@ -79,11 +93,10 @@ class CiscoDriver(BaseDriver):
         elif i == 3:
             logging.debug(privilege_exec_success_msg(device))
 
-    def login(self, login_type='ssh', enable_password=''):
+    def login(self, login_type='ssh'):
         """
         Login to Cisco IOS, IOS-XE, NXOS
         :param login_type: SSH or Telnet
-        :param enable_password: Enable password if required
 
         Authentication types:
          - username and password
@@ -114,12 +127,12 @@ class CiscoDriver(BaseDriver):
 
             elif j == 2:
                 logging.debug(user_exec_success_msg(self.device))
-                self.enable_mode(self.child, self.device, enable_password)
+                self.enable_mode(self.child, self.device, self.enable_password)
             elif j == 3:
                 logging.debug(privilege_exec_success_msg(self.device))
 
         elif i == 3:
-            self.enable_mode(self.child, self.device, enable_password)
+            self.enable_mode(self.child, self.device, self.enable_password)
 
         elif i == 4:
             logging.debug(privilege_exec_success_msg(self.device))

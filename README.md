@@ -27,8 +27,8 @@ pip install https://github.com/bobthebutcher/netconnect/archive/master.zip
 ```python
 # Cisco device
 from netconnect.cisco import CiscoDriver
-dev = CiscoDriver(device='test-csr-01', username='test-user', password='password')
-dev.login(enable_password='enable-pass')
+dev = CiscoDriver(device='test-csr-01', username='test-user', password='password', enable_password='enable-pass')
+dev.login()
 commands = ['show version', 'show run']
 results = dev.send_commands(commands)
 
