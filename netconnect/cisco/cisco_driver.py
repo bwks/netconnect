@@ -46,7 +46,9 @@ class CiscoDriver(BaseDriver):
                  ssh_port=22, ssh_key_file='', ssh_config_file='',
                  ignore_ssh_config=True, ignore_known_hosts=True,
                  disable_host_key_checking=False, timeout=5, enable_password=''):
-
+        """
+        :param enable_password: Password to enter privilege exec mode
+        """
         super(CiscoDriver, self).__init__(
             device, username, password, telnet_port,
             ssh_port, ssh_key_file, ssh_config_file,
