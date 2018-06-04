@@ -14,6 +14,10 @@ def enable_password_error_msg(device):
     return '{0} error sending enable password'.format(device)
 
 
+def enable_password_required_msg(device):
+    return '{0} requires enable password, but none provided'.format(device)
+
+
 def disable_paging_success_msg(device):
     return '{0} paging was disabled'.format(device)
 

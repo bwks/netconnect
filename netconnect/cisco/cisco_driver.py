@@ -25,6 +25,7 @@ from netconnect.messages import (
     device_connection_error_msg,
     user_password_error_msg,
     enable_password_error_msg,
+    enable_password_required_msg,
     user_exec_success_msg,
     privilege_exec_success_msg,
     configuration_mode_success_msg,
@@ -78,7 +79,7 @@ class CiscoDriver(BaseDriver):
             if not enable_password:
                 child.close()
                 raise EnablePasswordError(
-                    '{0} requires enable password, but none provided'.format(device)
+                    enable_password_required_msg(device)
                 )
 
             child.sendline(enable_password)
