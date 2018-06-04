@@ -47,7 +47,7 @@ class CiscoDriver(BaseDriver):
                  ignore_ssh_config=True, ignore_known_hosts=True,
                  disable_host_key_checking=False, timeout=5, enable_password=''):
 
-        super().__init__(
+        super(CiscoDriver, self).__init__(
             device, username, password, telnet_port,
             ssh_port, ssh_key_file, ssh_config_file,
             ignore_ssh_config, ignore_known_hosts,
