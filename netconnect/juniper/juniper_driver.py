@@ -2,7 +2,7 @@ import pexpect
 import logging
 
 from netconnect import helpers
-from netconnect.base import BaseLogin
+from netconnect.base import BaseDriver
 from netconnect.helpers import (
     validate_login_type,
     clean_up_error,
@@ -12,30 +12,51 @@ from netconnect.exceptions import (
     LoginTimeoutError,
     LoginCredentialsError,
 )
+from netconnect.constants import (
+    PASSWORD_PROMPT,
+    JUNIPER_OPER_PROMPT,
+    JUNIPER_CONFIG_PROMPT,
+    JUNIPER_SHELL_PROMPT,
+    JUNIPER_ALT_SHELL_PROMPT,
+)
+from netconnect.messages import (
+    send_command_error_msg,
+    operational_mode_success_msg,
+    device_connection_error_msg,
+    user_password_error_msg,
+    juniper_shell_mode_success_msg,
+    disable_paging_success_msg,
+    save_config_success_msg,
+    configuration_mode_success_msg,
+    netconf_enabled_success_msg,
+)
 
 # Settings
 logging.basicConfig(level=logging.DEBUG)
 
 
-class JuniperDriver(BaseLogin):
+class JuniperDriver(BaseDriver):
     """
     Driver to login and send commands to juniper devices.
     """
     @staticmethod
-    def operational_mode(child, device):
+    def operational_mode(child, device, command='cli'):
         """
         Move into operational mode if in root cli
         :param child: pexpect spawn child
         :param device: name of device
+        :param command: Command to enter operational mode
         :return: pexpect.spawn child
         """
-        child.sendline('cli')
-        i = child.expect(PEXPECT_ERRORS + ['.*>'])
+        child.sendline(command)
+        i = child.expect(PEXPECT_ERRORS + [JUNIPER_OPER_PROMPT])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending cli command'.format(device))
+            logging.debug(send_command_error_msg(device, command))
             clean_up_error(child, i)
+
         elif i == 2:
-            logging.debug('{0} operational mode'.format(device))
+            logging.debug(operational_mode_success_msg(device))
 
     def login(self, login_type='ssh'):
         """
@@ -52,28 +73,39 @@ class JuniperDriver(BaseLogin):
         login_cmd = self.ssh_driver if login_type.lower() == 'ssh' else self.telnet_driver
 
         self.child = pexpect.spawn(login_cmd, timeout=self.timeout)
-        i = self.child.expect(PEXPECT_ERRORS + ['.*assword', '.*:~ #', '@.*%', '.*>'])
+        i = self.child.expect(PEXPECT_ERRORS + [
+            PASSWORD_PROMPT, JUNIPER_ALT_SHELL_PROMPT, JUNIPER_SHELL_PROMPT, JUNIPER_OPER_PROMPT
+        ])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error connecting to device'.format(self.device))
+            logging.debug(device_connection_error_msg(self.device))
             clean_up_error(self.child, i, get_error=False)
-            raise LoginTimeoutError('{0} error connecting to device'.format(self.device))
+            raise LoginTimeoutError(device_connection_error_msg(self.device))
+
         elif i == 2:
             self.child.sendline(self.password)
-            j = self.child.expect(PEXPECT_ERRORS + ['.*:~ #', '@.*%', '.*>'])
+            j = self.child.expect(PEXPECT_ERRORS + [
+                JUNIPER_ALT_SHELL_PROMPT, JUNIPER_SHELL_PROMPT, JUNIPER_OPER_PROMPT
+            ])
+
             if j == 0 or j == 1:
-                logging.debug('{0} error sending user password'.format(self.device))
+                logging.debug(user_password_error_msg(self.device))
                 clean_up_error(self.child, j, get_error=False)
-                raise LoginCredentialsError('{0} error sending user password'.format(self.device))
+                raise LoginCredentialsError(user_password_error_msg(self.device))
+
             elif j == 2 or j == 3:
-                logging.debug('{0} root user mode'.format(self.device))
+                logging.debug(juniper_shell_mode_success_msg(self.device))
                 self.operational_mode(child=self.child, device=self.device)
+
             elif j == 4:
-                logging.debug('{0} operational mode'.format(self.device))
+                logging.debug(operational_mode_success_msg(self.device))
+
         elif i == 3 or i == 4:
-            logging.debug('{0} root user mode'.format(self.device))
+            logging.debug(juniper_shell_mode_success_msg(self.device))
             self.operational_mode(child=self.child, device=self.device)
+
         elif i == 5:
-            logging.debug('{0} operational mode'.format(self.device))
+            logging.debug(operational_mode_success_msg(self.device))
 
     def get_prompt(self):
         """
@@ -99,53 +131,62 @@ class JuniperDriver(BaseLogin):
 
         return helpers.send_commands(child=self.child, prompt=prompt, commands=commands)
 
-    def disable_paging(self, prompt=''):
+    def disable_paging(self, prompt='', command='set cli screen-length 0'):
         """
         Disable paging of long terminal outputs. Represented as <more>
+        Paging is disabled from operational mode (>).
         :param prompt: Prompt to expect
+        :param command: Command to disable paging
         :return: True if successful
         """
         if not prompt:
             prompt = self.get_prompt()
 
-        self.child.sendline('set cli screen-length 0')
+        self.child.sendline(command)
         i = self.child.expect(PEXPECT_ERRORS + [prompt])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending disable paging command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
+
         elif i == 2:
-            logging.debug('{0} paging disabled'.format(self.device))
+            logging.debug(disable_paging_success_msg(self.device))
             return True
 
-    def save_config(self):
+    def save_config(self, command='commit'):
         """
         Save device config
         :return: True if successful
         """
-        self.child.sendline('commit')
-        i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+        self.child.sendline(command)
+        i = self.child.expect(PEXPECT_ERRORS + [JUNIPER_CONFIG_PROMPT])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending commit command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
+
         elif i == 2:
-            logging.debug('{0} config saved'.format(self.device))
+            logging.debug(save_config_success_msg(self.device))
             return True
 
-    def configuration_mode(self):
+    def configuration_mode(self, command='configure'):
         """
         Enter configuration mode
+        :param command: Command to enter configuration mode
         :return: True if successful
         """
-        self.child.sendline('configure')
-        i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+        self.child.sendline(command)
+        i = self.child.expect(PEXPECT_ERRORS + [JUNIPER_CONFIG_PROMPT])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending configure command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
+
         elif i == 2:
-            logging.debug('{0} configuration mode'.format(self.device))
+            logging.debug(configuration_mode_success_msg(self.device))
             return True
 
-    def enable_api(self):
+    def enable_api(self, command='set system services netconf ssh'):
         """
         Enable device API
         :return: True if successful
@@ -153,11 +194,13 @@ class JuniperDriver(BaseLogin):
         if self.get_prompt().endswith('>'):
             self.configuration_mode()
 
-        self.child.sendline('set system services netconf ssh')
-        i = self.child.expect(PEXPECT_ERRORS + ['.*#'])
+        self.child.sendline(command)
+        i = self.child.expect(PEXPECT_ERRORS + [JUNIPER_CONFIG_PROMPT])
+
         if i == 0 or i == 1:
-            logging.debug('{0} error sending enable api command'.format(self.device))
+            logging.debug(send_command_error_msg(self.device, command))
             clean_up_error(self.child, i)
+
         elif i == 2:
-            logging.debug('{0} netconf ssh enabled'.format(self.device))
+            logging.debug(netconf_enabled_success_msg(self.device))
             return self.save_config()

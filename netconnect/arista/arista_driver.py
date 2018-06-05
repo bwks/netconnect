@@ -10,9 +10,11 @@ class AristaDriver(CiscoDriver):
         Enable device API.
         :return:
         """
-        commands = ['management api http-commands',
-                    'protocol https {0}'.format(https_port),
-                    'no shutdown']
+        commands = [
+            'management api http-commands',
+            'protocol https {0}'.format(https_port),
+            'no shutdown'
+        ]
 
         self.configuration_mode()
         self.send_commands(commands=commands, prompt='.*api-http-cmds\)#', disable_paging=False)

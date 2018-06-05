@@ -77,3 +77,20 @@ def clean_up_error(child, error, get_error=True):
     child.close()
     if get_error:
         parse_error(error)
+
+
+def clean_output(output, highlight_command=False):
+    """
+    Remove command and trailing prompt from output
+    :param output: output to clean
+    :param highlight_command:
+    :return: String slice between first and lines
+    """
+    cleaned = output.splitlines()[1:-1]
+
+    if highlight_command:
+        hashes = '#' * 20
+        command = output.splitlines()[0]
+        cleaned.insert(0, '\r\n{0} {1} {2}\r\n'.format(hashes, command, hashes))
+
+    return '\r\n'.join(cleaned)

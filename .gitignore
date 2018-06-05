@@ -90,3 +90,10 @@ ENV/
 
 # pycharm
 .idea/
+
+# pipenv
+Pipfile*
+
+
+# pytest
+.pytest_cache/
