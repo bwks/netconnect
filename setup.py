@@ -6,6 +6,7 @@ def read(file_name):
     with open(os.path.join(os.path.dirname(__file__), file_name), 'r') as f:
         return f.read()
 
+
 setup(
     name='netconnect',
     version=read('VERSION'),
