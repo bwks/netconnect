@@ -58,7 +58,7 @@ automatically if there is a failure.
 ```python
 # Cisco device
 from netconnect.cisco import CiscoDriver
-with CiscoDriver(device='test-csr-01', username='test-user', password='password', enable_password='enable-pass') as dev:
+with CiscoDriver('test-csr-01', 'test-user', 'password', 'enable-pass') as dev:
     commands = ['show version', 'show run']
     results = dev.send_commands(commands)
 ```
