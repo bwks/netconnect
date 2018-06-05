@@ -91,6 +91,6 @@ def clean_output(output, highlight_command=False):
     if highlight_command:
         hashes = '#' * 20
         command = output.splitlines()[0]
-        cleaned.insert(0, '{0} {1} {2}\r\n'.format(hashes, command, hashes))
+        cleaned.insert(0, '\r\n{0} {1} {2}\r\n'.format(hashes, command, hashes))
 
     return '\r\n'.join(cleaned)
