@@ -130,7 +130,7 @@ class ViptelaDriver(BaseDriver):
             logging.debug(configuration_mode_success_msg(self.device))
             return True
 
-    def backup_config_db(
+    def config_db_backup(
             self, filename='',
             path='/home/basic',
             prompt=VIPTELA_PRIV_PROMPT,
