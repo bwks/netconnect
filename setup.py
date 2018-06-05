@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def read(file_name):
@@ -8,16 +8,13 @@ def read(file_name):
 
 setup(
     name='netconnect',
-    version='0.3',
+    version=read('VERSION'),
     author='Brad Searle',
     author_email='bradleysearle@gmail.com',
-    packages=['netconnect',
-              'netconnect.arista',
-              'netconnect.cisco',
-              'netconnect.juniper',
-              'netconnect.unix',
-              'tests'],
+    packages=find_packages(),
     license='GNU GENERAL PUBLIC LICENSE Version 3',
     long_description=read('README.txt'),
-    install_requires=['pexpect']
+    install_requires=[
+        'pexpect',
+    ]
 )
