@@ -50,3 +50,15 @@ dev.enable_api()
 from netconnect import helpers
 helpers.DEBUG = True
 ```
+
+
+### Context Manager
+The context manager will take care of logging in and also closing the connection
+automatically if there is a failure.
+```python
+# Cisco device
+from netconnect.cisco import CiscoDriver
+with CiscoDriver('test-csr-01', 'test-user', 'password', 'enable-pass') as dev:
+    commands = ['show version', 'show run']
+    results = dev.send_commands(commands)
+```

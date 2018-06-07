@@ -1,6 +1,7 @@
 class BaseDriver(object):
     """
-    Base driver class. Device Driver classes will inherit this class
+    Base driver class. Device Driver classes will inherit this class,
+    this class should not be used directly.
     """
     def __init__(self, device, username='', password='', telnet_port=23,
                  ssh_port=22, ssh_key_file='', ssh_config_file='',
@@ -51,6 +52,18 @@ class BaseDriver(object):
 
         self.telnet_driver = 'telnet {0} {1}'.format(self.device, self.telnet_port)
 
+    def __enter__(self):
+        """
+        Context manager entry point.
+        :return: self
+        """
+        self.login()
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        """Context manager exit"""
+        self.child.close()
+
     @property
     def child(self):
         return self.__child
@@ -58,6 +71,12 @@ class BaseDriver(object):
     @child.setter
     def child(self, value):
         self.__child = value
+
+    def login(self):
+        """
+        This function is implemented in the subclasses.
+        """
+        raise NotImplementedError
 
     def scp(self, source_file, destination_location):
 
