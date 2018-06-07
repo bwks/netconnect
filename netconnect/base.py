@@ -53,10 +53,15 @@ class BaseDriver(object):
         self.telnet_driver = 'telnet {0} {1}'.format(self.device, self.telnet_port)
 
     def __enter__(self):
+        """
+        Context manager entry point.
+        :return: self
+        """
         self.login()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        """Context manager exit"""
         self.child.close()
 
     @property
