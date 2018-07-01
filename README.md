@@ -10,10 +10,10 @@ It is usefull for controlling terminal sessions where an API is not available or
 
 netconnect has a concept of drivers which are used to seperate out the differing terminal intricacies.  
 There is currently drivers for the following device models: 
- - cisco
- - juniper
- - arista
- - unix (bash)
+ - cisco: IOS, ASA, Viptela
+ - juniper: Junos
+ - arista: EOS
+ - unix: Bash
 
 A driver can be written for any terminal type that accepts telnet or SSH control.
 
