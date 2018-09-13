@@ -86,7 +86,7 @@ def clean_output(output, highlight_command=False):
     :param highlight_command:
     :return: String slice between first and lines
     """
-    cleaned = output.splitlines()[1:-1]
+    cleaned = output.splitlines()[1::]
 
     if highlight_command:
         hashes = '#' * 20

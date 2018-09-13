@@ -1,7 +1,14 @@
 import pytest
 import sys
 
-from netconnect.helpers import parse_error, validate_login_type, get_prompt, send_commands
+from netconnect.helpers import (
+    parse_error,
+    validate_login_type,
+    get_prompt,
+    send_commands,
+    clean_output,
+)
+
 from pexpect.exceptions import EOF, TIMEOUT
 
 if sys.version_info >= (3, 3):
@@ -70,3 +77,15 @@ def test_validate_login_type_with_ssh_does_not_raise_value_error():
     assert validate_login_type('ssh') is True
 
 
+def test_clean_output_returns_expected_string():
+    data = 'show run | i logging\r\nlogging source-interface Loopback10 vrf vrf-1\r\nlogging host 1.2.3.4\r\nlogging host 1.2.3.5\r\n'
+    expected = 'logging source-interface Loopback10 vrf vrf-1\r\nlogging host 1.2.3.4\r\nlogging host 1.2.3.5'
+
+    assert clean_output(data) == expected
+
+
+def test_clean_output_with_highlighed_command_returns_expected_string():
+    data = 'show run | i logging\r\nlogging source-interface Loopback10 vrf vrf-1\r\nlogging host 1.2.3.4\r\nlogging host 1.2.3.5\r\n'
+    expected = '\r\n#################### show run | i logging ####################\r\n\r\nlogging source-interface Loopback10 vrf vrf-1\r\nlogging host 1.2.3.4\r\nlogging host 1.2.3.5'
+
+    assert clean_output(data, highlight_command=True) == expected
