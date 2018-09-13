@@ -97,3 +97,6 @@ Pipfile*
 
 # pytest
 .pytest_cache/
+
+# virtual envs
+.venv/
