@@ -64,3 +64,7 @@ def rest_api_enabled_success_msg(device):
 
 def bash_success_msg(device):
     return '{0} entered bash shell'.format(device)
+
+
+def scp_success_msg(device, source_file, destination_file):
+    return '{0} copied from {1} to {2}'.format(source_file, device, destination_file)
