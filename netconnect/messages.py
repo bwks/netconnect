@@ -67,4 +67,4 @@ def bash_success_msg(device):
 
 
 def scp_success_msg(device, source_file, destination_file):
-    return '{0} copied from {1} to {2}'.format(source_file, device, destination_file)
+    return 'file {0} copied from {1} to {2}'.format(source_file, device, destination_file)

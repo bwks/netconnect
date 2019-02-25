@@ -19,7 +19,11 @@ from netconnect.messages import (
 )
 
 
-def scp(device, username, password, source_file, destination_file, timeout=60):
+def scp(device, username, password, source_file, destination_file, timeout=60,
+        scp_port=22, ssh_key_file='', ssh_config_file='',
+        ignore_ssh_config=True, ignore_known_hosts=True,
+        disable_host_key_checking=False
+        ):
     """
     SCP a file from a remote device to the local host.
     :param device: name or IP of remote device
@@ -28,11 +32,41 @@ def scp(device, username, password, source_file, destination_file, timeout=60):
     :param source_file: full path to source file
     :param destination_file: full path to destination file
     :param timeout: timeout value for transfer
+
+    :param scp_port:
+    :param ssh_key_file:
+    :param ssh_config_file:
+    :param ignore_ssh_config:
+    :param ignore_known_hosts:
+    :param disable_host_key_checking:
     :return: True if successful
     """
-    scp_command = 'scp {0}@{1}:{2} {3}'.format(
-        username, device, source_file, destination_file
-    )
+    if ssh_config_file and ignore_ssh_config:
+        raise AttributeError('cannot define ssh_config_file '
+                             'and set ignore_ssh_config to True')
+
+    options = []
+    if scp_port:
+        options.append('-P {0}'.format(scp_port))
+
+    if ignore_known_hosts:
+        options.append('-o UserKnownHostsFile=/dev/null')
+
+    if disable_host_key_checking:
+        options.append('-o StrictHostKeyChecking=no')
+
+    if ssh_key_file:
+        options.append('-o IdentityFile={0}'.format(ssh_key_file))
+
+    if ssh_config_file:
+        options.append('-F {0}'.format(ssh_config_file))
+
+    if ignore_ssh_config:
+        options.append('-F /dev/null')
+
+    scp_command = 'scp {0} {1}@{2}:{3} {4}'.format(
+        ' '.join(options), username, device, source_file, destination_file)
+
     child = pexpect.spawn(scp_command)
     i = child.expect(PEXPECT_ERRORS + [PASSWORD_PROMPT])
 
