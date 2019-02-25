@@ -150,6 +150,11 @@ class ViptelaDriver(BaseDriver):
 
         backup_command = 'request nms configuration-db backup path {0}/{1}'.format(path, filename)
 
+        # from somewhere around version 18.X the output of the backup
+        # command became very large. The below compensates for that.
+        self.child.maxread = 100000000
+        self.child.searchwindowsize = 2000
+
         self.child.sendline(backup_command)
         i = self.child.expect(PEXPECT_ERRORS + [prompt], timeout=timeout)
 
