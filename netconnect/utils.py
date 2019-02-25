@@ -33,12 +33,12 @@ def scp(device, username, password, source_file, destination_file, timeout=60,
     :param destination_file: full path to destination file
     :param timeout: timeout value for transfer
 
-    :param scp_port:
-    :param ssh_key_file:
-    :param ssh_config_file:
-    :param ignore_ssh_config:
-    :param ignore_known_hosts:
-    :param disable_host_key_checking:
+    :param scp_port: SCP port number
+    :param ssh_key_file: SSH key file
+    :param ssh_config_file: SSH config file
+    :param ignore_ssh_config: Ignore SSH config file
+    :param ignore_known_hosts: Ignore SSH known hosts file
+    :param disable_host_key_checking: Disable remote host key checking
     :return: True if successful
     """
     if ssh_config_file and ignore_ssh_config:
